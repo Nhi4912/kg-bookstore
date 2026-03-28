@@ -1,0 +1,1479 @@
+openapi: "3.1.0"
+info:
+  title: KGBookstore API
+  version: "1.0.0"
+  description: |
+    Backend API for the KGBookstore e-commerce admin dashboard.
+    Base URL: /api/vac_shop
+    Auth: JWT Bearer token in Authorization header
+
+servers:
+  - url: "{baseUrl}/api/vac_shop"
+    variables:
+      baseUrl:
+        default: http://localhost:8080
+
+paths:
+  /admins/sign-up:
+    post:
+      operationId: signUp
+      tags: [Auth]
+      summary: Register admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedResponse"
+
+  /admins/sign-in:
+    post:
+      operationId: signIn
+      tags: [Auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInResponse"
+
+  /products:
+    get:
+      operationId: listProducts
+      tags: [Products]
+      summary: List products with filters
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/SortBy"
+        - $ref: "#/components/parameters/SortDir"
+        - name: name
+          in: query
+          schema: { type: string }
+        - name: category_ids
+          in: query
+          schema: { type: array, items: { type: string } }
+        - name: vendor_ids
+          in: query
+          schema: { type: array, items: { type: string } }
+        - name: collection_ids
+          in: query
+          schema: { type: array, items: { type: string } }
+        - name: from_price
+          in: query
+          schema: { type: integer }
+        - name: to_price
+          in: query
+          schema: { type: integer }
+        - name: is_visible
+          in: query
+          schema: { type: boolean }
+        - name: stock_status
+          in: query
+          schema:
+            $ref: "#/components/schemas/ProductStockStatus"
+        - name: price_sort_dir
+          in: query
+          schema: { type: string, enum: [asc, desc] }
+        - name: is_for_menu
+          in: query
+          schema: { type: boolean }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+
+  /products/{productId}:
+    get:
+      operationId: getProduct
+      tags: [Products]
+      summary: Get product detail
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+
+  /products/with-admin:
+    post:
+      operationId: createProduct
+      tags: [Products]
+      summary: Create product
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedResponse"
+
+  /products/with-admin/{productId}:
+    put:
+      operationId: updateProduct
+      tags: [Products]
+      summary: Update product
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProductRequest"
+      responses:
+        "200":
+          description: OK
+    delete:
+      operationId: deleteProduct
+      tags: [Products]
+      summary: Delete product
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+
+  /products/{productId}/variants/with-admin:
+    post:
+      operationId: createVariant
+      tags: [Variants]
+      summary: Create variant
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVariantRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedResponse"
+
+  /products/{productId}/variants/{variantId}/with-admin:
+    put:
+      operationId: updateVariant
+      tags: [Variants]
+      summary: Update variant
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: variantId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateVariantRequest"
+      responses:
+        "200":
+          description: OK
+    delete:
+      operationId: deleteVariant
+      tags: [Variants]
+      summary: Delete variant
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: variantId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+
+  /collections:
+    get:
+      operationId: listCollections
+      tags: [Collections]
+      summary: List collections
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/SortBy"
+        - $ref: "#/components/parameters/SortDir"
+        - name: name
+          in: query
+          schema: { type: string }
+        - name: is_visible
+          in: query
+          schema: { type: boolean }
+        - name: tag
+          in: query
+          schema:
+            $ref: "#/components/schemas/CollectionTag"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CollectionListResponse"
+
+  /collections/{collectionId}:
+    get:
+      operationId: getCollection
+      tags: [Collections]
+      summary: Get collection detail
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CollectionResponse"
+
+  /collections/with-admin:
+    post:
+      operationId: createCollection
+      tags: [Collections]
+      summary: Create collection
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCollectionRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedResponse"
+
+  /collections/with-admin/{collectionId}:
+    put:
+      operationId: updateCollection
+      tags: [Collections]
+      summary: Update collection
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCollectionRequest"
+      responses:
+        "200":
+          description: OK
+    delete:
+      operationId: deleteCollection
+      tags: [Collections]
+      summary: Delete collection
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+
+  /orders:
+    post:
+      operationId: createPublicOrder
+      tags: [Orders]
+      summary: Create order (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedResponse"
+
+  /orders/with-admin:
+    get:
+      operationId: listOrders
+      tags: [Orders]
+      summary: List orders
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/SortBy"
+        - $ref: "#/components/parameters/SortDir"
+        - name: keyword
+          in: query
+          schema: { type: string }
+        - name: order_statuses
+          in: query
+          schema: { type: array, items: { $ref: "#/components/schemas/OrderStatus" } }
+        - name: shipment_statuses
+          in: query
+          schema: { type: array, items: { $ref: "#/components/schemas/ShipmentStatus" } }
+        - name: payment_status
+          in: query
+          schema: { type: string }
+        - name: created_from
+          in: query
+          schema: { type: string, format: date-time }
+        - name: created_to
+          in: query
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderListResponse"
+    post:
+      operationId: createAdminOrder
+      tags: [Orders]
+      summary: Create order (admin)
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedResponse"
+
+  /orders/with-admin/{orderId}:
+    get:
+      operationId: getOrder
+      tags: [Orders]
+      summary: Get order detail
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+    put:
+      operationId: updateOrder
+      tags: [Orders]
+      summary: Update order status
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrderRequest"
+      responses:
+        "200":
+          description: OK
+
+  /menus/with-admin:
+    get:
+      operationId: getMenus
+      tags: [Menu]
+      summary: Get menu tree
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuResponse"
+    post:
+      operationId: upsertMenus
+      tags: [Menu]
+      summary: Upsert menu tree
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertMenuRequest"
+      responses:
+        "200":
+          description: OK
+
+  /attributes:
+    get:
+      operationId: listAttributes
+      tags: [Attributes]
+      summary: List attributes
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttributeListResponse"
+
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [Categories]
+      summary: List categories
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryListResponse"
+
+  /categories/with-admin:
+    post:
+      operationId: createCategory
+      tags: [Categories]
+      summary: Create category
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedResponse"
+
+  /tags:
+    get:
+      operationId: listTags
+      tags: [Tags]
+      summary: Get tags with collections
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagListResponse"
+
+  /discounts/with-admin:
+    get:
+      operationId: listDiscounts
+      tags: [Discounts]
+      summary: List discounts
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiscountListResponse"
+    post:
+      operationId: createDiscount
+      tags: [Discounts]
+      summary: Create discount
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDiscountRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedResponse"
+
+  /vouchers:
+    get:
+      operationId: getVoucher
+      tags: [Vouchers]
+      summary: Get voucher by code
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VoucherResponse"
+
+  /public/provinces:
+    get:
+      operationId: listProvinces
+      tags: [Location]
+      summary: List provinces
+      parameters:
+        - name: name
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProvinceListResponse"
+
+  /public/districts:
+    get:
+      operationId: listDistricts
+      tags: [Location]
+      summary: List districts
+      parameters:
+        - name: province_id
+          in: query
+          required: true
+          schema: { type: string }
+        - name: name
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DistrictListResponse"
+
+  /public/wards:
+    get:
+      operationId: listWards
+      tags: [Location]
+      summary: List wards
+      parameters:
+        - name: district_id
+          in: query
+          required: true
+          schema: { type: string }
+        - name: name
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WardListResponse"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Limit:
+      name: limit
+      in: query
+      schema: { type: integer, default: 20 }
+    Offset:
+      name: offset
+      in: query
+      schema: { type: integer, default: 0 }
+    SortBy:
+      name: sort_by
+      in: query
+      schema: { type: string, default: created_at }
+    SortDir:
+      name: sort_dir
+      in: query
+      schema: { type: string, enum: [asc, desc], default: desc }
+
+  schemas:
+    # === Enums ===
+    OrderStatus:
+      type: string
+      enum: [PENDING, SUBMITTED, CANCELLED, INVOICED]
+    ShipmentStatus:
+      type: string
+      enum: [NONE, PENDING, PACKED, DELIVERING, DELIVERED, RETURNED]
+    BillItemType:
+      type: string
+      enum: [PRODUCT_BILL, VOUCHER_BILL, EXTRA_FEE_BILL, SHIPPING_BILL, ADJUSTMENT_BILL, DISCOUNT_BILL]
+    BillItemStatus:
+      type: string
+      enum: [PENDING, BILLED, SHIPPING, INVOICED, CANCELLED]
+    PaymentMethod:
+      type: string
+      enum: [CASH, CREDIT_AND_DEBIT, MOBILE_WALLET, BANK_TRANSFER, CASH_ON_DELIVERY]
+    CollectionTag:
+      type: string
+      enum: [SIGNATURE, SPOTLIGHT]
+    ProductStockStatus:
+      type: string
+      enum: [IN_STOCK, OUT_OF_STOCK]
+    VoucherAmountType:
+      type: string
+      enum: [FIXED_AMOUNT, PERCENTAGE]
+
+    # === Shared ===
+    CreatedResponse:
+      type: object
+      required: [id]
+      properties:
+        id: { type: string }
+
+    PagingResponse:
+      type: object
+      required: [total]
+      properties:
+        total: { type: integer }
+        next_page:
+          type: object
+          nullable: true
+          properties:
+            limit: { type: integer }
+            offset: { type: integer }
+        prev_page:
+          type: object
+          nullable: true
+          properties:
+            limit: { type: integer }
+            offset: { type: integer }
+
+    ImageRequest:
+      type: object
+      required: [url, file_name, alt, order]
+      properties:
+        url: { type: string }
+        file_name: { type: string }
+        alt: { type: string }
+        order: { type: integer }
+
+    ImageResponse:
+      type: object
+      required: [id, file_name, url, alt, extension, size, created_at, updated_at]
+      properties:
+        id: { type: string }
+        file_name: { type: string }
+        url: { type: string }
+        alt: { type: string }
+        extension: { type: string }
+        size: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    # === Auth ===
+    SignUpRequest:
+      type: object
+      required: [name, email, password, confirm_password]
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string, nullable: true }
+        password: { type: string, minLength: 6 }
+        confirm_password: { type: string }
+        url: { type: string }
+
+    SignInRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+
+    AdminProfile:
+      type: object
+      required: [id, account_id, email, name, created_at, updated_at]
+      properties:
+        id: { type: string }
+        account_id: { type: string }
+        email: { type: string }
+        name: { type: string }
+        phone: { type: string, nullable: true }
+        avatar_url: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    SignInResponse:
+      type: object
+      required: [access_token, refresh_token, profile]
+      properties:
+        access_token: { type: string }
+        refresh_token: { type: string }
+        profile:
+          $ref: "#/components/schemas/AdminProfile"
+
+    # === Products ===
+    VendorResponse:
+      type: object
+      required: [id, name, created_at, updated_at]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    CategoryResponse:
+      type: object
+      required: [id, name, created_at, updated_at]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    AttributeValueResponse:
+      type: object
+      required: [id, name, description, value, created_at, updated_at]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        value: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    VariantResponse:
+      type: object
+      required: [id, product_id, barcode, sku, retail_price, cost_price, stock_quantity, attributes, created_at, updated_at]
+      properties:
+        id: { type: string }
+        product_id: { type: string }
+        product:
+          $ref: "#/components/schemas/ProductResponse"
+          nullable: true
+        image_id: { type: string, nullable: true }
+        image:
+          $ref: "#/components/schemas/ImageResponse"
+          nullable: true
+        attributes:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttributeValueResponse"
+        barcode: { type: string }
+        sku: { type: string }
+        retail_price: { type: integer }
+        cost_price: { type: integer }
+        stock_quantity: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    ProductCollectionPath:
+      type: object
+      required: [collection_id, path]
+      properties:
+        collection_id: { type: string }
+        path:
+          type: array
+          items: { type: string }
+
+    ProductResponse:
+      type: object
+      required: [id, name, description, quote, type, is_visible, collection_ids, created_at, updated_at]
+      properties:
+        id: { type: string }
+        vendor_id: { type: string, nullable: true }
+        category_id: { type: string, nullable: true }
+        vendor:
+          $ref: "#/components/schemas/VendorResponse"
+          nullable: true
+        category:
+          $ref: "#/components/schemas/CategoryResponse"
+          nullable: true
+        images:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ImageResponse"
+        variants:
+          type: array
+          items:
+            $ref: "#/components/schemas/VariantResponse"
+        collection_ids:
+          type: array
+          items: { type: string }
+        product_collection_paths:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductCollectionPath"
+        size_guide: { type: string }
+        name: { type: string }
+        description: { type: string }
+        quote: { type: string }
+        type: { type: integer }
+        sequence_number: { type: integer }
+        is_visible: { type: boolean }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    ProductListResponse:
+      type: object
+      required: [items, paging]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductResponse"
+        paging:
+          $ref: "#/components/schemas/PagingResponse"
+
+    CreateProductRequest:
+      type: object
+      required: [name]
+      properties:
+        vendor_id: { type: string, nullable: true }
+        category_id: { type: string, nullable: true }
+        collection_ids:
+          type: array
+          items: { type: string }
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/ImageRequest"
+        variants:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateVariantRequest"
+        name: { type: string }
+        description: { type: string }
+        quote: { type: string }
+        type: { type: integer }
+        is_visible: { type: boolean }
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        vendor_id: { type: string, nullable: true }
+        category_id: { type: string, nullable: true }
+        collection_ids:
+          type: array
+          items: { type: string }
+        is_update_images: { type: boolean }
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/ImageRequest"
+        name: { type: string }
+        description: { type: string }
+        quote: { type: string }
+        type: { type: integer }
+        is_visible: { type: boolean }
+
+    # === Variants ===
+    AttributeValueInput:
+      type: object
+      required: [attribute_id, value]
+      properties:
+        attribute_id: { type: string }
+        value: { type: string }
+
+    CreateVariantRequest:
+      type: object
+      properties:
+        attribute_values:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttributeValueInput"
+        cost_price: { type: integer }
+        retail_price: { type: integer }
+        sku: { type: string }
+        barcode: { type: string }
+        stock_quantity: { type: integer }
+        image:
+          $ref: "#/components/schemas/ImageRequest"
+          nullable: true
+
+    UpdateVariantRequest:
+      type: object
+      properties:
+        attribute_values:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttributeValueInput"
+        cost_price: { type: integer }
+        retail_price: { type: integer }
+        sku: { type: string }
+        barcode: { type: string }
+        stock_quantity: { type: integer }
+        image:
+          $ref: "#/components/schemas/ImageRequest"
+          nullable: true
+        is_update_image: { type: boolean }
+
+    # === Collections ===
+    CollectionResponse:
+      type: object
+      required: [id, title, description, is_visible, tag, created_at, updated_at]
+      properties:
+        id: { type: string }
+        image_id: { type: string, nullable: true }
+        image:
+          $ref: "#/components/schemas/ImageResponse"
+          nullable: true
+        title: { type: string }
+        description: { type: string }
+        is_visible: { type: boolean }
+        tag: { type: string }
+        size_guide: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    CollectionListResponse:
+      type: object
+      required: [items, paging]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CollectionResponse"
+        paging:
+          $ref: "#/components/schemas/PagingResponse"
+
+    CreateCollectionRequest:
+      type: object
+      required: [title, tag]
+      properties:
+        product_ids:
+          type: array
+          items: { type: string }
+        image_url: { type: string }
+        title: { type: string }
+        is_visible: { type: boolean }
+        description: { type: string }
+        size_guide: { type: string }
+        tag: { type: string }
+
+    UpdateCollectionRequest:
+      type: object
+      properties:
+        product_ids:
+          type: array
+          items: { type: string }
+        image_url: { type: string }
+        title: { type: string }
+        is_visible: { type: boolean }
+        tag: { type: string }
+        size_guide: { type: string }
+        description: { type: string }
+
+    # === Orders ===
+    CustomerInput:
+      type: object
+      required: [phone_number, last_name, first_name]
+      properties:
+        id: { type: string }
+        phone_number: { type: string }
+        last_name: { type: string }
+        first_name: { type: string }
+        address: { type: string }
+
+    CustomerResponse:
+      type: object
+      required: [id, phone_number, last_name, first_name, created_at, updated_at]
+      properties:
+        id: { type: string }
+        phone_number: { type: string }
+        last_name: { type: string }
+        first_name: { type: string }
+        address: { type: string }
+        customer_type: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    ShipmentInput:
+      type: object
+      required: [ward_id, district_id, province_id, address]
+      properties:
+        ward_id: { type: string }
+        district_id: { type: string }
+        province_id: { type: string }
+        address: { type: string }
+
+    ShipmentResponse:
+      type: object
+      required: [id, order_id, customer_id, status]
+      properties:
+        id: { type: string }
+        order_id: { type: string }
+        customer_id: { type: string }
+        status: { type: string }
+        province_id: { type: string }
+        district_id: { type: string }
+        ward_id: { type: string }
+        province_name: { type: string }
+        district_name: { type: string }
+        ward_name: { type: string }
+        address: { type: string }
+        phone_number: { type: string }
+
+    OrderItemInput:
+      type: object
+      required: [variant_id, quantity]
+      properties:
+        variant_id: { type: string }
+        quantity: { type: integer }
+        discount_id: { type: string }
+
+    BillItemInput:
+      type: object
+      required: [type, final_price]
+      properties:
+        variant_id: { type: string }
+        discount_id: { type: string }
+        voucher_id: { type: string }
+        type: { type: string }
+        discount_price: { type: integer }
+        final_price: { type: integer }
+
+    OrderItemResponse:
+      type: object
+      required: [id, variant_id, order_id, quantity, product_name, product_price, created_at, updated_at]
+      properties:
+        id: { type: string }
+        variant_id: { type: string }
+        order_id: { type: string }
+        user_product_id: { type: string }
+        image:
+          $ref: "#/components/schemas/ImageResponse"
+        attribute_values:
+          type: array
+          items:
+            type: object
+            properties:
+              attribute_name: { type: string }
+              attribute_value: { type: string }
+        quantity: { type: integer }
+        product_name: { type: string }
+        product_price: { type: integer }
+        discounts:
+          type: array
+          items:
+            type: object
+            properties:
+              discount_id: { type: string }
+              discount_name: { type: string }
+              discount_amount_type: { type: string }
+              discount_amount_value: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    BillItemResponse:
+      type: object
+      required: [id, order_id, status, type, final_price, created_at, updated_at]
+      properties:
+        id: { type: string }
+        order_id: { type: string }
+        user_product_id: { type: string }
+        customer_id: { type: string }
+        variant_id: { type: string }
+        discount_id: { type: string }
+        discount_name: { type: string }
+        discount_amount_type: { type: string }
+        discount_amount_value: { type: integer }
+        voucher_id: { type: string }
+        voucher_name: { type: string }
+        voucher_amount_type: { type: string }
+        voucher_amount_value: { type: integer }
+        payment_method: { type: string }
+        status: { type: string }
+        type: { type: string }
+        quantity: { type: integer }
+        product_price: { type: integer }
+        discount_price: { type: integer }
+        final_price: { type: integer }
+        adjustment_price: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    CreateOrderRequest:
+      type: object
+      required: [order_items, bill_items, customer, payment_method]
+      properties:
+        order_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItemInput"
+        bill_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/BillItemInput"
+        customer:
+          $ref: "#/components/schemas/CustomerInput"
+        payment_method:
+          $ref: "#/components/schemas/PaymentMethod"
+        shipment:
+          $ref: "#/components/schemas/ShipmentInput"
+          nullable: true
+        note: { type: string }
+
+    UpdateOrderRequest:
+      type: object
+      required: [order_id, order_status]
+      properties:
+        order_id: { type: string }
+        order_status:
+          $ref: "#/components/schemas/OrderStatus"
+
+    OrderResponse:
+      type: object
+      required: [order_id, status, order_items, bill_items, created_at, updated_at]
+      properties:
+        order_id: { type: string }
+        customer:
+          $ref: "#/components/schemas/CustomerResponse"
+        shipment:
+          $ref: "#/components/schemas/ShipmentResponse"
+          nullable: true
+        status: { type: string }
+        note: { type: string }
+        sequence_number: { type: integer }
+        order_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItemResponse"
+        bill_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/BillItemResponse"
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    OrderListResponse:
+      type: object
+      required: [items, paging]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderResponse"
+        paging:
+          $ref: "#/components/schemas/PagingResponse"
+
+    # === Menu ===
+    MenuItemResponse:
+      type: object
+      required: [id, collection_id, order_number, name, path]
+      properties:
+        id: { type: string }
+        collection_id: { type: string }
+        order_number: { type: integer }
+        collection:
+          $ref: "#/components/schemas/CollectionResponse"
+          nullable: true
+        name: { type: string }
+        path:
+          type: array
+          items: { type: string }
+        sub_menus:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItemResponse"
+
+    MenuResponse:
+      type: object
+      required: [menu_items]
+      properties:
+        menu_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItemResponse"
+
+    MenuItemInput:
+      type: object
+      required: [collection_id, order_number, name, path]
+      properties:
+        id: { type: string }
+        collection_id: { type: string }
+        order_number: { type: integer }
+        name: { type: string }
+        path:
+          type: array
+          items: { type: string }
+        sub_menus:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItemInput"
+
+    UpsertMenuRequest:
+      type: object
+      required: [menu_items]
+      properties:
+        menu_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItemInput"
+
+    # === Attributes ===
+    AttributeResponse:
+      type: object
+      required: [id, name, description, created_at, updated_at]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    AttributeListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttributeResponse"
+
+    CategoryListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryResponse"
+
+    # === Tags ===
+    TagResponse:
+      type: object
+      required: [tag_id, tag_name, collection_ids]
+      properties:
+        tag_id: { type: string }
+        tag_name: { type: string }
+        collection_ids:
+          type: array
+          items: { type: string }
+
+    TagListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TagResponse"
+
+    # === Discounts ===
+    DiscountProductResponse:
+      type: object
+      required: [id, product_id, discount_id, created_at, updated_at]
+      properties:
+        id: { type: string }
+        product_id: { type: string }
+        product:
+          $ref: "#/components/schemas/ProductResponse"
+          nullable: true
+        discount_id: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    DiscountResponse:
+      type: object
+      required: [id, name, discount_amount_type, discount_amount_value, created_at, updated_at]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        discount_amount_type: { type: string }
+        discount_amount_value: { type: integer }
+        start_date: { type: string, format: date-time, nullable: true }
+        end_date: { type: string, format: date-time, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        discount_products:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiscountProductResponse"
+
+    DiscountListResponse:
+      type: object
+      required: [items, paging]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiscountResponse"
+        paging:
+          $ref: "#/components/schemas/PagingResponse"
+
+    CreateDiscountRequest:
+      type: object
+      required: [name, discount_amount_type, discount_amount_value]
+      properties:
+        name: { type: string }
+        discount_amount_type: { type: string }
+        discount_amount_value: { type: integer }
+        start_date: { type: string, format: date-time, nullable: true }
+        end_date: { type: string, format: date-time, nullable: true }
+
+    # === Vouchers ===
+    VoucherResponse:
+      type: object
+      required: [id, name, code, voucher_amount_type, voucher_amount_value, is_active, created_at, updated_at]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        code: { type: string }
+        voucher_amount_type:
+          $ref: "#/components/schemas/VoucherAmountType"
+        voucher_amount_value: { type: integer }
+        is_active: { type: boolean }
+        start_date: { type: string, format: date-time, nullable: true }
+        end_date: { type: string, format: date-time, nullable: true }
+        min_order_final_price: { type: integer }
+        max_uses: { type: integer }
+        max_uses_per_user: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    # === Location ===
+    ProvinceResponse:
+      type: object
+      required: [id, name, type]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        type: { type: string }
+
+    ProvinceListResponse:
+      type: object
+      required: [items, paging]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProvinceResponse"
+        paging:
+          $ref: "#/components/schemas/PagingResponse"
+
+    DistrictResponse:
+      type: object
+      required: [id, name, type, province_id]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        type: { type: string }
+        province_id: { type: string }
+
+    DistrictListResponse:
+      type: object
+      required: [items, paging]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DistrictResponse"
+        paging:
+          $ref: "#/components/schemas/PagingResponse"
+
+    WardResponse:
+      type: object
+      required: [id, name, type, district_id]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        type: { type: string }
+        district_id: { type: string }
+
+    WardListResponse:
+      type: object
+      required: [items, paging]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WardResponse"
+        paging:
+          $ref: "#/components/schemas/PagingResponse"

@@ -11,8 +11,17 @@ if (!root) {
 	throw new Error("Root element not found");
 }
 
-createRoot(root).render(
-	<StrictMode>
-		<App />
-	</StrictMode>,
-);
+const boot = async () => {
+	if (import.meta.env.VITE_USE_MOCKS === "true") {
+		const { setupMocks } = await import("@/mocks/setup");
+		await setupMocks();
+	}
+
+	createRoot(root).render(
+		<StrictMode>
+			<App />
+		</StrictMode>,
+	);
+};
+
+boot();

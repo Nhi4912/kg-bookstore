@@ -8,6 +8,7 @@ import CollectionListPage from "@/pages/collections/collection-list";
 import CreateCollectionPage from "@/pages/collections/create-collection";
 import EditCollectionPage from "@/pages/collections/edit-collection";
 import LoginPage from "@/pages/login";
+import MenuPage from "@/pages/menus/menu-page";
 import CreateOrderPage from "@/pages/orders/create-order";
 import OrderDetailPage from "@/pages/orders/order-detail";
 import OrderListPage from "@/pages/orders/order-list";
@@ -61,10 +62,8 @@ const App = () => {
 								path="collections/:id/edit"
 								element={<EditCollectionPage />}
 							/>
-							<Route
-								path="menus/edit"
-								element={<div>Danh Mục (Coming soon)</div>}
-							/>
+							{/* Menu */}
+							<Route path="menus/edit" element={<MenuPage />} />
 							<Route
 								path="promotions"
 								element={<div>Khuyến mãi (Coming soon)</div>}

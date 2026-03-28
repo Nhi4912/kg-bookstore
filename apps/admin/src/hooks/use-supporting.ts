@@ -1,7 +1,6 @@
 import type {
 	AttributeListResponse,
 	CategoryListResponse,
-	CollectionListResponse,
 	VendorResponse,
 } from "@kgbookstore/api-contract";
 import { useQuery } from "@tanstack/react-query";
@@ -41,18 +40,4 @@ const useAttributes = () => {
 	});
 };
 
-// ─── Collections (for product form multi-select) ───
-
-const useCollections = (params?: { limit?: number }) => {
-	return useQuery({
-		queryKey: ["collections", params],
-		queryFn: () =>
-			apiClient
-				.get<CollectionListResponse>("/collections", {
-					params: { limit: params?.limit ?? 100 },
-				})
-				.then((r) => r.data),
-	});
-};
-
-export { useAttributes, useCategories, useCollections, useVendors };
+export { useAttributes, useCategories, useVendors };

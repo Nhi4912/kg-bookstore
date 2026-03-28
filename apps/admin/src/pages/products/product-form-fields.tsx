@@ -7,11 +7,8 @@ import {
 	SelectHF,
 	TextareaHF,
 } from "@/components/shared/form-fields";
-import {
-	useCategories,
-	useCollections,
-	useVendors,
-} from "@/hooks/use-supporting";
+import { useCollections } from "@/hooks/use-collections";
+import { useCategories, useVendors } from "@/hooks/use-supporting";
 
 interface ProductFormFieldsProps {
 	isEdit?: boolean;

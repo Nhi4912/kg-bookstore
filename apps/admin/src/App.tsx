@@ -4,6 +4,9 @@ import { Toaster } from "sonner";
 import { GuestOnly, RequireAuth } from "@/components/auth/auth-guard";
 import { RootLayout } from "@/components/layout";
 import { queryClient } from "@/lib/query-client";
+import CollectionListPage from "@/pages/collections/collection-list";
+import CreateCollectionPage from "@/pages/collections/create-collection";
+import EditCollectionPage from "@/pages/collections/edit-collection";
 import LoginPage from "@/pages/login";
 import CreateProductPage from "@/pages/products/create-product";
 import CreateVariantPage from "@/pages/products/create-variant";
@@ -45,9 +48,15 @@ const App = () => {
 								element={<EditVariantPage />}
 							/>
 
+							{/* Collections */}
+							<Route path="collections" element={<CollectionListPage />} />
 							<Route
-								path="collections/*"
-								element={<div>Nhóm sản phẩm (Coming soon)</div>}
+								path="collections/create"
+								element={<CreateCollectionPage />}
+							/>
+							<Route
+								path="collections/:id/edit"
+								element={<EditCollectionPage />}
 							/>
 							<Route
 								path="menus/edit"

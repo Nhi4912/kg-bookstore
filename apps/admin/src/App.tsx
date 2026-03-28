@@ -5,6 +5,11 @@ import { GuestOnly, RequireAuth } from "@/components/auth/auth-guard";
 import { RootLayout } from "@/components/layout";
 import { queryClient } from "@/lib/query-client";
 import LoginPage from "@/pages/login";
+import CreateProductPage from "@/pages/products/create-product";
+import CreateVariantPage from "@/pages/products/create-variant";
+import EditProductPage from "@/pages/products/edit-product";
+import EditVariantPage from "@/pages/products/edit-variant";
+import ProductListPage from "@/pages/products/product-list";
 import SignupPage from "@/pages/signup";
 
 const App = () => {
@@ -26,10 +31,20 @@ const App = () => {
 								path="orders/*"
 								element={<div>Đơn Hàng (Coming soon)</div>}
 							/>
+
+							{/* Products */}
+							<Route path="products" element={<ProductListPage />} />
+							<Route path="products/create" element={<CreateProductPage />} />
+							<Route path="products/:id/edit" element={<EditProductPage />} />
 							<Route
-								path="products/*"
-								element={<div>Sản Phẩm (Coming soon)</div>}
+								path="products/:id/variants/create"
+								element={<CreateVariantPage />}
 							/>
+							<Route
+								path="products/:id/variants/:variantId/edit"
+								element={<EditVariantPage />}
+							/>
+
 							<Route
 								path="collections/*"
 								element={<div>Nhóm sản phẩm (Coming soon)</div>}

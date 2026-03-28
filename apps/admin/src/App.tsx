@@ -8,6 +8,9 @@ import CollectionListPage from "@/pages/collections/collection-list";
 import CreateCollectionPage from "@/pages/collections/create-collection";
 import EditCollectionPage from "@/pages/collections/edit-collection";
 import LoginPage from "@/pages/login";
+import CreateOrderPage from "@/pages/orders/create-order";
+import OrderDetailPage from "@/pages/orders/order-detail";
+import OrderListPage from "@/pages/orders/order-list";
 import CreateProductPage from "@/pages/products/create-product";
 import CreateVariantPage from "@/pages/products/create-variant";
 import EditProductPage from "@/pages/products/edit-product";
@@ -30,10 +33,10 @@ const App = () => {
 					<Route element={<RequireAuth />}>
 						<Route element={<RootLayout />}>
 							<Route index element={<div>Tổng Quan (Coming soon)</div>} />
-							<Route
-								path="orders/*"
-								element={<div>Đơn Hàng (Coming soon)</div>}
-							/>
+							{/* Orders */}
+							<Route path="orders" element={<OrderListPage />} />
+							<Route path="orders/create" element={<CreateOrderPage />} />
+							<Route path="orders/:id" element={<OrderDetailPage />} />
 
 							{/* Products */}
 							<Route path="products" element={<ProductListPage />} />

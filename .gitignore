@@ -25,3 +25,6 @@ dist-ssr
 *.sln
 *.sw?
 .opencode
+.agents
+.claude
+skills-lock.json

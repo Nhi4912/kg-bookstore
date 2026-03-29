@@ -1,6 +1,7 @@
 import { Minus, Plus, Trash2, X } from "lucide-react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { formatCurrency } from "@/lib/format";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -15,6 +16,7 @@ const MiniCart = ({
 	const updateQuantity = useCartStore((s) => s.updateQuantity);
 	const removeItem = useCartStore((s) => s.removeItem);
 	const totalPrice = useCartStore((s) => s.totalPrice());
+	const drawerRef = useFocusTrap(open);
 
 	// Close on Escape key
 	useEffect(() => {
@@ -29,12 +31,13 @@ const MiniCart = ({
 	return (
 		<>
 			{/* Overlay */}
-			{open && (
+			{open ? (
 				<div className="fixed inset-0 z-50 bg-black/40" onClick={onClose} />
-			)}
+			) : null}
 
 			{/* Drawer */}
 			<div
+				ref={drawerRef}
 				role="dialog"
 				aria-modal="true"
 				aria-label="Giỏ hàng"
@@ -60,6 +63,8 @@ const MiniCart = ({
 										<img
 											src={item.imgUrl}
 											alt={item.productName}
+											width={64}
+											height={64}
 											className="h-16 w-16 rounded object-cover"
 										/>
 									) : (
@@ -75,7 +80,7 @@ const MiniCart = ({
 										<div className="mt-1 flex items-center gap-2">
 											<button
 												onClick={() => updateQuantity(item.id, item.qty - 1)}
-												className="rounded border p-1.5"
+												className="flex h-8 w-8 items-center justify-center rounded border"
 												aria-label="Giảm số lượng"
 											>
 												<Minus size={14} />
@@ -83,7 +88,7 @@ const MiniCart = ({
 											<span className="text-sm">{item.qty}</span>
 											<button
 												onClick={() => updateQuantity(item.id, item.qty + 1)}
-												className="rounded border p-1.5"
+												className="flex h-8 w-8 items-center justify-center rounded border"
 												aria-label="Tăng số lượng"
 											>
 												<Plus size={14} />
@@ -93,7 +98,7 @@ const MiniCart = ({
 									<div className="flex flex-col items-end justify-between">
 										<button
 											onClick={() => removeItem(item.id)}
-											className="text-gray-400 hover:text-red-500"
+											className="flex h-8 w-8 items-center justify-center text-gray-400 hover:text-red-500"
 											aria-label="Xoá khỏi giỏ hàng"
 										>
 											<Trash2 size={14} />
@@ -108,7 +113,7 @@ const MiniCart = ({
 					)}
 				</div>
 
-				{items.length > 0 && (
+				{items.length > 0 ? (
 					<div className="border-t p-4">
 						<div className="mb-3 flex items-center justify-between">
 							<span className="text-gray-600">Tổng cộng:</span>
@@ -124,7 +129,7 @@ const MiniCart = ({
 							Xem giỏ hàng
 						</Link>
 					</div>
-				)}
+				) : null}
 			</div>
 		</>
 	);

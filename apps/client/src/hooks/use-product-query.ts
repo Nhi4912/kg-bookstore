@@ -2,7 +2,7 @@ import type {
 	ProductListResponse,
 	ProductResponse,
 } from "@kgbookstore/api-contract";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_PAGE_SIZE } from "@/constants";
 import { apiClient } from "@/lib/axios";
 
@@ -12,9 +12,21 @@ interface FilterQuery {
 	to_price: number | null;
 }
 
+/**
+ * Serializes a query object to a stable string for dependency tracking.
+ * This avoids the anti-pattern of using objects in useEffect dependencies
+ * or relying on JSON.stringify + useRef for comparison.
+ */
+const serializeQuery = (q: Record<string, unknown>): string =>
+	Object.keys(q)
+		.sort()
+		.map((k) => `${k}=${JSON.stringify(q[k])}`)
+		.join("&");
+
 export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 	const [total, setTotal] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isError, setIsError] = useState(false);
 	const [canLoadMore, setCanLoadMore] = useState(false);
 	const [isLoadingMore, setIsLoadingMore] = useState(false);
 	const [listProducts, setListProducts] = useState<ProductResponse[]>([]);
@@ -33,13 +45,17 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 		to_price: null,
 	});
 
-	const prevDefaultQuery = useRef(JSON.stringify(defaultQuery));
+	// Use serialized string as primitive dependency instead of object ref
+	const defaultQueryKey = useMemo(
+		() => serializeQuery(defaultQuery),
+		[defaultQuery],
+	);
+	const prevDefaultQueryKey = useRef(defaultQueryKey);
 
-	// Reset when defaultQuery changes
+	// Reset when defaultQuery changes (compared as primitive string)
 	useEffect(() => {
-		const serialized = JSON.stringify(defaultQuery);
-		if (serialized !== prevDefaultQuery.current) {
-			prevDefaultQuery.current = serialized;
+		if (defaultQueryKey !== prevDefaultQueryKey.current) {
+			prevDefaultQueryKey.current = defaultQueryKey;
 			setQuery({
 				limit: DEFAULT_PAGE_SIZE,
 				offset: 0,
@@ -47,16 +63,18 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 				...defaultQuery,
 			});
 			setIsLoading(true);
+			setIsError(false);
 			setListProducts([]);
 		}
-	}, [defaultQuery]);
+	}, [defaultQueryKey, defaultQuery]);
 
-	// Fetch products
-	const prevQuery = useRef("");
+	// Fetch products — use serialized query as primitive dependency
+	const queryKey = useMemo(() => serializeQuery(query), [query]);
+	const prevQueryKey = useRef("");
+
 	useEffect(() => {
-		const serialized = JSON.stringify(query);
-		if (serialized === prevQuery.current) return;
-		prevQuery.current = serialized;
+		if (queryKey === prevQueryKey.current) return;
+		prevQueryKey.current = queryKey;
 
 		const params = { ...query };
 		if (
@@ -68,6 +86,8 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 			delete params.vendor_ids;
 		}
 
+		setIsError(false);
+
 		apiClient
 			.get<ProductListResponse>("/products", { params })
 			.then((res) => {
@@ -78,24 +98,27 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 				setIsLoading(false);
 			})
 			.catch(() => {
+				setIsError(true);
 				setIsLoading(false);
 				setIsLoadingMore(false);
 			});
-	}, [query]);
+	}, [queryKey, query]);
 
 	// Track canLoadMore
 	useEffect(() => {
 		setCanLoadMore(listProducts.length < total);
 	}, [listProducts.length, total]);
 
-	// Track filter dirty state
+	// Track filter dirty state using primitive dependencies
+	const vendorCount = filterQuery.vendor_ids.length;
+	const fromPrice = filterQuery.from_price;
+	const toPrice = filterQuery.to_price;
+
 	useEffect(() => {
 		setIsShowClearFilter(
-			filterQuery.vendor_ids.length > 0 ||
-				filterQuery.from_price !== null ||
-				filterQuery.to_price !== null,
+			vendorCount > 0 || fromPrice !== null || toPrice !== null,
 		);
-	}, [filterQuery]);
+	}, [vendorCount, fromPrice, toPrice]);
 
 	const loadMore = useCallback(() => {
 		setQuery((prev) => ({
@@ -123,15 +146,29 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 		setFilterQuery({ vendor_ids: [], from_price: null, to_price: null });
 	}, []);
 
-	// Apply filter changes
-	const prevFilter = useRef(JSON.stringify(filterQuery));
+	const retry = useCallback(() => {
+		setIsError(false);
+		setIsLoading(true);
+		setListProducts([]);
+		prevQueryKey.current = "";
+		setQuery((prev) => ({ ...prev }));
+	}, []);
+
+	// Apply filter changes — use primitive dependency
+	const filterKey = useMemo(
+		() =>
+			`${filterQuery.vendor_ids.join(",")}_${filterQuery.from_price}_${filterQuery.to_price}`,
+		[filterQuery],
+	);
+	const prevFilterKey = useRef(filterKey);
+
 	useEffect(() => {
-		const serialized = JSON.stringify(filterQuery);
-		if (serialized === prevFilter.current) return;
-		prevFilter.current = serialized;
+		if (filterKey === prevFilterKey.current) return;
+		prevFilterKey.current = filterKey;
 
 		setListProducts([]);
 		setIsLoading(true);
+		setIsError(false);
 		setQuery((prev) => ({
 			...prev,
 			vendor_ids:
@@ -140,12 +177,13 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 			to_price: filterQuery.to_price ?? 99999999,
 			offset: 0,
 		}));
-	}, [filterQuery]);
+	}, [filterKey, filterQuery]);
 
 	return {
 		listProducts,
 		total,
 		isLoading,
+		isError,
 		canLoadMore,
 		isLoadingMore,
 		isShowClearFilter,
@@ -154,5 +192,6 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 		handleChangePrice,
 		handleChangeVendors,
 		clearFilter,
+		retry,
 	};
 };

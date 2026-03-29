@@ -1,4 +1,5 @@
 import type { ProductResponse } from "@kgbookstore/api-contract";
+import { AlertTriangle } from "lucide-react";
 import ProductCard from "./product-card";
 
 const ProductSkeleton = () => (
@@ -15,9 +16,13 @@ const ProductSkeleton = () => (
 const ProductGrid = ({
 	products,
 	isLoading,
+	isError = false,
+	onRetry,
 }: {
 	products: ProductResponse[];
 	isLoading: boolean;
+	isError?: boolean;
+	onRetry?: () => void;
 }) => {
 	if (isLoading) {
 		return (
@@ -25,6 +30,25 @@ const ProductGrid = ({
 				{Array.from({ length: 12 }).map((_, i) => (
 					<ProductSkeleton key={i} />
 				))}
+			</div>
+		);
+	}
+
+	if (isError) {
+		return (
+			<div className="flex flex-col items-center justify-center py-16 text-gray-500">
+				<AlertTriangle size={32} className="mb-3 text-amber-500" />
+				<p className="mb-1 font-medium">Không thể tải sản phẩm</p>
+				<p className="mb-4 text-sm">Vui lòng thử lại sau.</p>
+				{onRetry ? (
+					<button
+						type="button"
+						onClick={onRetry}
+						className="rounded-md bg-[var(--color-brand-green)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-brand-green)]/90"
+					>
+						Thử lại
+					</button>
+				) : null}
 			</div>
 		);
 	}

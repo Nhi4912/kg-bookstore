@@ -35,6 +35,7 @@ const ProductCard = ({ product }: { product: ProductResponse }) => {
 					<img
 						src={imageUrl}
 						alt={product.name}
+						loading="lazy"
 						className="h-full w-full object-cover transition-transform group-hover:scale-105"
 					/>
 				) : (

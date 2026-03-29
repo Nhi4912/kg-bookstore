@@ -20,7 +20,7 @@ const ProductFilter = ({
 	return (
 		<div className="space-y-6">
 			{/* Vendor filter */}
-			{vendors.length > 0 && (
+			{vendors.length > 0 ? (
 				<div>
 					<h4 className="mb-3 text-sm font-semibold">Lọc theo nhà cung cấp</h4>
 					<div className="space-y-2">
@@ -40,7 +40,7 @@ const ProductFilter = ({
 						))}
 					</div>
 				</div>
-			)}
+			) : null}
 
 			{/* Price filter */}
 			<div>

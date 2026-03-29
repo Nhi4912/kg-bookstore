@@ -4,6 +4,7 @@ import {
 	useCallback,
 	useContext,
 	useEffect,
+	useId,
 	useRef,
 	useState,
 } from "react";
@@ -12,9 +13,16 @@ import {
 interface AccordionCtx {
 	open: boolean;
 	toggle: () => void;
+	contentId: string;
+	triggerId: string;
 }
 
-const Ctx = createContext<AccordionCtx>({ open: false, toggle: () => {} });
+const Ctx = createContext<AccordionCtx>({
+	open: false,
+	toggle: () => {},
+	contentId: "",
+	triggerId: "",
+});
 
 /* ─── Root ─── */
 const Accordion = ({
@@ -28,9 +36,12 @@ const Accordion = ({
 }) => {
 	const [open, setOpen] = useState(defaultOpen);
 	const toggle = useCallback(() => setOpen((o) => !o), []);
+	const id = useId();
+	const contentId = `accordion-content-${id}`;
+	const triggerId = `accordion-trigger-${id}`;
 
 	return (
-		<Ctx.Provider value={{ open, toggle }}>
+		<Ctx.Provider value={{ open, toggle, contentId, triggerId }}>
 			<div className={className}>{children}</div>
 		</Ctx.Provider>
 	);
@@ -44,13 +55,15 @@ const AccordionTrigger = ({
 	children: React.ReactNode;
 	className?: string;
 }) => {
-	const { open, toggle } = useContext(Ctx);
+	const { open, toggle, contentId, triggerId } = useContext(Ctx);
 
 	return (
 		<button
+			id={triggerId}
 			type="button"
 			onClick={toggle}
 			aria-expanded={open}
+			aria-controls={contentId}
 			className={`flex w-full items-center justify-between ${className}`}
 		>
 			{children}
@@ -70,7 +83,7 @@ const AccordionContent = ({
 	children: React.ReactNode;
 	className?: string;
 }) => {
-	const { open } = useContext(Ctx);
+	const { open, contentId, triggerId } = useContext(Ctx);
 	const ref = useRef<HTMLDivElement>(null);
 	const [height, setHeight] = useState(0);
 
@@ -82,6 +95,9 @@ const AccordionContent = ({
 
 	return (
 		<div
+			id={contentId}
+			role="region"
+			aria-labelledby={triggerId}
 			className="overflow-hidden transition-[height] duration-250 ease-in-out"
 			style={{ height: open ? height : 0 }}
 		>

@@ -1,98 +1,16 @@
-import type {
-	ProductResponse,
-	VariantResponse,
-} from "@kgbookstore/api-contract";
+import type { VariantResponse } from "@kgbookstore/api-contract";
 import { Loader2, Minus, Plus, ShoppingCart } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
-import ProductCard from "@/components/shared/product-card";
-import { useProductDetail, useProducts } from "@/hooks/use-products";
+import { useProductDetail } from "@/hooks/use-products";
 import { formatCurrency } from "@/lib/format";
 import { useCartStore } from "@/stores/cart-store";
 import { useRecentStore } from "@/stores/recent-store";
+import RecentlyViewed from "./recently-viewed";
+import RelatedProducts from "./related-products";
+import VariantButton from "./variant-button";
 
-/* ─── Variant Button ─── */
-const VariantButton = ({
-	variant,
-	isSelected,
-	onClick,
-}: {
-	variant: VariantResponse;
-	isSelected: boolean;
-	onClick: () => void;
-}) => {
-	const label =
-		variant.attributes?.map((attr) => attr.value ?? attr.name).join(" / ") ??
-		variant.sku;
-
-	return (
-		<button
-			onClick={onClick}
-			className={`rounded border px-3 py-1.5 text-xs transition-colors ${
-				isSelected
-					? "border-[var(--color-brand-green)] bg-[var(--color-brand-green)] text-white"
-					: "border-gray-300 hover:border-gray-400"
-			}`}
-		>
-			{label}
-		</button>
-	);
-};
-
-/* ─── Related Products Section ─── */
-const RelatedProducts = ({ collectionId }: { collectionId: string }) => {
-	const { data } = useProducts({ collectionIds: [collectionId], limit: 8 });
-	const products = data?.items ?? [];
-
-	if (products.length === 0) return null;
-
-	return (
-		<section className="mt-12">
-			<div className="mb-4 flex items-center justify-between">
-				<h2 className="text-xl font-bold">Các sản phẩm liên quan</h2>
-				<Link
-					to={`/collection/${collectionId}`}
-					className="text-sm text-gray-500 hover:text-[var(--color-brand-green)]"
-				>
-					Xem thêm &rarr;
-				</Link>
-			</div>
-			<div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-				{products.map((p) => (
-					<ProductCard key={p.id} product={p} />
-				))}
-			</div>
-		</section>
-	);
-};
-
-/* ─── Recently Viewed Section ─── */
-const RecentlyViewed = ({ productIds }: { productIds: string[] }) => {
-	const { data } = useProducts({ limit: 8 });
-	const products = useMemo(
-		() =>
-			(data?.items ?? []).filter((p: ProductResponse) =>
-				productIds.includes(p.id),
-			),
-		[data, productIds],
-	);
-
-	if (products.length === 0) return null;
-
-	return (
-		<section className="mt-12">
-			<h2 className="mb-4 text-xl font-bold">Các sản phẩm đã xem</h2>
-			<div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-				{products.map((p: ProductResponse) => (
-					<ProductCard key={p.id} product={p} />
-				))}
-			</div>
-		</section>
-	);
-};
-
-/* ─── Main Product Detail Page ─── */
 const ProductDetailPage = () => {
 	const { id = "" } = useParams<{ id: string }>();
 	const { data: product, isLoading } = useProductDetail(id);
@@ -172,6 +90,8 @@ const ProductDetailPage = () => {
 						<img
 							src={imageUrl}
 							alt={product.name}
+							width={300}
+							height={300}
 							className="h-auto max-h-[300px] w-auto max-w-full object-contain"
 						/>
 					) : (
@@ -185,12 +105,12 @@ const ProductDetailPage = () => {
 				<div className="md:col-span-5">
 					<h1 className="mb-3 text-2xl font-bold">{product.name}</h1>
 
-					{product.vendor && (
+					{product.vendor ? (
 						<div className="mb-2 text-sm text-gray-600">
 							<span>Nhà cung cấp: </span>
 							<span className="font-medium">{product.vendor.name}</span>
 						</div>
-					)}
+					) : null}
 
 					<p className="mb-1 text-2xl font-bold text-[var(--color-brand-green)]">
 						{formatCurrency(price)}
@@ -222,7 +142,7 @@ const ProductDetailPage = () => {
 					</div>
 
 					{/* Variants */}
-					{variants.length > 1 && (
+					{variants.length > 1 ? (
 						<div className="mb-4 flex flex-wrap gap-2">
 							{variants.map((v) => (
 								<VariantButton
@@ -233,7 +153,7 @@ const ProductDetailPage = () => {
 								/>
 							))}
 						</div>
-					)}
+					) : null}
 
 					{/* Add to Cart */}
 					<button
@@ -257,7 +177,7 @@ const ProductDetailPage = () => {
 			</div>
 
 			{/* Description */}
-			{product.description && (
+			{product.description ? (
 				<div className="mt-12">
 					<div className="border-b">
 						<span className="inline-block border-b-2 border-[var(--color-brand-green)] pb-3 text-sm font-semibold">
@@ -269,15 +189,15 @@ const ProductDetailPage = () => {
 						dangerouslySetInnerHTML={{ __html: product.description }}
 					/>
 				</div>
-			)}
+			) : null}
 
 			{/* Related Products */}
-			{product.collection_ids?.[0] && (
+			{product.collection_ids?.[0] ? (
 				<RelatedProducts collectionId={product.collection_ids[0]} />
-			)}
+			) : null}
 
 			{/* Recently Viewed */}
-			{recentIds.length > 0 && <RecentlyViewed productIds={recentIds} />}
+			{recentIds.length > 0 ? <RecentlyViewed productIds={recentIds} /> : null}
 		</div>
 	);
 };

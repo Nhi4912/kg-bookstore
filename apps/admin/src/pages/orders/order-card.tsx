@@ -17,6 +17,7 @@ import {
 	formatCustomerName,
 	formatDate,
 } from "@/lib/format";
+import OrderItemRow from "./order-item-row";
 
 interface OrderCardProps {
 	order: OrderResponse;
@@ -96,39 +97,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
 					<div className="md:col-span-2">
 						<div className="space-y-2">
 							{order.order_items.map((item) => (
-								<div key={item.id} className="flex items-center gap-3 text-sm">
-									{item.image?.url ? (
-										<img
-											src={item.image.url}
-											alt={item.product_name}
-											className="h-10 w-10 rounded border object-cover"
-											width={40}
-											height={40}
-										/>
-									) : (
-										<div className="h-10 w-10 rounded bg-muted" />
-									)}
-									<div className="flex-1">
-										<p className="font-medium">{item.product_name}</p>
-										{item.attribute_values &&
-										item.attribute_values.length > 0 ? (
-											<p className="text-xs text-muted-foreground">
-												{item.attribute_values
-													.map(
-														(av) =>
-															`${av.attribute_name}: ${av.attribute_value}`,
-													)
-													.join(", ")}
-											</p>
-										) : null}
-									</div>
-									<span className="text-muted-foreground">
-										x{item.quantity}
-									</span>
-									<span className="w-24 text-right">
-										{formatCurrency(item.product_price)}
-									</span>
-								</div>
+								<OrderItemRow key={item.id} item={item} compact />
 							))}
 						</div>
 

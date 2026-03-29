@@ -13,6 +13,8 @@ import { ROUTES } from "@/constants";
 import { PAYMENT_METHOD_LABELS } from "@/constants/order";
 import { useCreateOrder } from "@/hooks/use-orders";
 import { formatCurrency } from "@/lib/format";
+import type { OrderItemData } from "./create-order-item-row";
+import CreateOrderItemRow from "./create-order-item-row";
 
 const PAYMENT_METHOD_OPTIONS = Object.entries(PAYMENT_METHOD_LABELS).map(
 	([value, label]) => ({
@@ -24,15 +26,7 @@ const PAYMENT_METHOD_OPTIONS = Object.entries(PAYMENT_METHOD_LABELS).map(
 const CreateOrderPage = () => {
 	const navigate = useNavigate();
 	const createOrder = useCreateOrder();
-	const [orderItems, setOrderItems] = useState<
-		Array<{
-			variant_id: string;
-			product_name: string;
-			variant_label: string;
-			quantity: number;
-			price: number;
-		}>
-	>([]);
+	const [orderItems, setOrderItems] = useState<OrderItemData[]>([]);
 
 	const form = useForm<CreateOrderRequest>({
 		resolver: zodResolver(createOrderRequestSchema),
@@ -56,8 +50,7 @@ const CreateOrderPage = () => {
 	);
 
 	const handleAddMockItem = () => {
-		// Mock product for frontend development — will be replaced by ProductSelectionDialog
-		const mockItem = {
+		const mockItem: OrderItemData = {
 			variant_id: `mock-variant-${Date.now()}`,
 			product_name: `Sản phẩm mẫu ${orderItems.length + 1}`,
 			variant_label: "Mặc định",
@@ -171,60 +164,12 @@ const CreateOrderPage = () => {
 									) : (
 										<div className="space-y-2">
 											{orderItems.map((item) => (
-												<div
+												<CreateOrderItemRow
 													key={item.variant_id}
-													className="flex items-center gap-3 rounded-lg border p-3"
-												>
-													<div className="h-12 w-12 rounded bg-muted" />
-													<div className="flex-1">
-														<p className="font-medium">{item.product_name}</p>
-														<p className="text-xs text-muted-foreground">
-															{item.variant_label}
-														</p>
-													</div>
-													<div className="flex items-center gap-2">
-														<Button
-															type="button"
-															variant="outline"
-															size="icon-xs"
-															onClick={() =>
-																handleQuantityChange(
-																	item.variant_id,
-																	item.quantity - 1,
-																)
-															}
-														>
-															-
-														</Button>
-														<span className="w-8 text-center">
-															{item.quantity}
-														</span>
-														<Button
-															type="button"
-															variant="outline"
-															size="icon-xs"
-															onClick={() =>
-																handleQuantityChange(
-																	item.variant_id,
-																	item.quantity + 1,
-																)
-															}
-														>
-															+
-														</Button>
-													</div>
-													<span className="w-24 text-right text-sm">
-														{formatCurrency(item.price * item.quantity)}
-													</span>
-													<Button
-														type="button"
-														variant="ghost"
-														size="icon-xs"
-														onClick={() => handleRemoveItem(item.variant_id)}
-													>
-														×
-													</Button>
-												</div>
+													item={item}
+													onQuantityChange={handleQuantityChange}
+													onRemove={handleRemoveItem}
+												/>
 											))}
 										</div>
 									)}

@@ -11,6 +11,9 @@ const NavItem = ({ item }: { item: MenuItemResponse }) => {
 			<Link
 				to={`/collection/${item.collection_id}`}
 				className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[var(--color-brand-green)] transition-colors"
+				{...(hasChildren
+					? { "aria-haspopup": "true", "aria-expanded": "false" }
+					: {})}
 			>
 				{item.name}
 				{hasChildren && <ChevronDown size={14} />}

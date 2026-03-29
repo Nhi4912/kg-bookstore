@@ -1,4 +1,5 @@
 import { Minus, Plus, Trash2, X } from "lucide-react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "@/lib/format";
 import { useCartStore } from "@/stores/cart-store";
@@ -15,6 +16,16 @@ const MiniCart = ({
 	const removeItem = useCartStore((s) => s.removeItem);
 	const totalPrice = useCartStore((s) => s.totalPrice());
 
+	// Close on Escape key
+	useEffect(() => {
+		if (!open) return;
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === "Escape") onClose();
+		};
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [open, onClose]);
+
 	return (
 		<>
 			{/* Overlay */}
@@ -24,13 +35,16 @@ const MiniCart = ({
 
 			{/* Drawer */}
 			<div
+				role="dialog"
+				aria-modal="true"
+				aria-label="Giỏ hàng"
 				className={`fixed right-0 top-0 z-50 flex h-full w-80 flex-col bg-white shadow-xl transition-transform duration-300 ${
 					open ? "translate-x-0" : "translate-x-full"
 				}`}
 			>
 				<div className="flex items-center justify-between border-b p-4">
 					<h3 className="text-lg font-semibold">Giỏ hàng</h3>
-					<button onClick={onClose} className="p-1">
+					<button onClick={onClose} className="p-1" aria-label="Đóng giỏ hàng">
 						<X size={20} />
 					</button>
 				</div>
@@ -61,14 +75,16 @@ const MiniCart = ({
 										<div className="mt-1 flex items-center gap-2">
 											<button
 												onClick={() => updateQuantity(item.id, item.qty - 1)}
-												className="rounded border p-0.5"
+												className="rounded border p-1.5"
+												aria-label="Giảm số lượng"
 											>
 												<Minus size={14} />
 											</button>
 											<span className="text-sm">{item.qty}</span>
 											<button
 												onClick={() => updateQuantity(item.id, item.qty + 1)}
-												className="rounded border p-0.5"
+												className="rounded border p-1.5"
+												aria-label="Tăng số lượng"
 											>
 												<Plus size={14} />
 											</button>
@@ -78,6 +94,7 @@ const MiniCart = ({
 										<button
 											onClick={() => removeItem(item.id)}
 											className="text-gray-400 hover:text-red-500"
+											aria-label="Xoá khỏi giỏ hàng"
 										>
 											<Trash2 size={14} />
 										</button>

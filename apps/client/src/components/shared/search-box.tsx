@@ -26,6 +26,7 @@ const SearchBox = () => {
 				value={query}
 				onChange={(e) => setQuery(e.target.value)}
 				placeholder="Tìm kiếm sản phẩm..."
+				aria-label="Tìm kiếm sản phẩm"
 				className="w-full rounded-full border bg-gray-50 py-2 pl-10 pr-4 text-sm outline-none transition-colors focus:border-[var(--color-brand-green)] focus:bg-white"
 			/>
 		</form>

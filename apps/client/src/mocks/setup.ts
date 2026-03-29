@@ -34,83 +34,49 @@ const numParam = (config: InternalAxiosRequestConfig, key: string) => {
 /*  Product filtering (mirrors use-product-query params)               */
 /* ------------------------------------------------------------------ */
 
+const parseJsonParam = (raw: string | undefined): string[] => {
+	if (!raw) return [];
+	try {
+		const parsed = JSON.parse(raw) as string[];
+		return Array.isArray(parsed) ? parsed : [];
+	} catch {
+		return [];
+	}
+};
+
 const filterProducts = (config: InternalAxiosRequestConfig) => {
-	let items = [...MOCK_PRODUCTS];
-
-	// collection_ids filter (JSON stringified array)
-	const rawCollectionIds = param(config, "collection_ids");
-	if (rawCollectionIds) {
-		try {
-			const ids = JSON.parse(rawCollectionIds) as string[];
-			if (ids.length > 0) {
-				items = items.filter((p) =>
-					p.collection_ids.some((cid) => ids.includes(cid)),
-				);
-			}
-		} catch {
-			/* ignore parse errors */
-		}
-	}
-
-	// product_ids filter (JSON stringified array)
-	const rawProductIds = param(config, "product_ids");
-	if (rawProductIds) {
-		try {
-			const ids = JSON.parse(rawProductIds) as string[];
-			if (ids.length > 0) {
-				items = items.filter((p) => ids.includes(p.id));
-			}
-		} catch {
-			/* ignore */
-		}
-	}
-
-	// vendor_ids filter (JSON stringified array)
-	const rawVendorIds = param(config, "vendor_ids");
-	if (rawVendorIds) {
-		try {
-			const ids = JSON.parse(rawVendorIds) as string[];
-			if (ids.length > 0) {
-				items = items.filter((p) => ids.includes(p.vendor_id));
-			}
-		} catch {
-			/* ignore */
-		}
-	}
-
-	// name search
-	const name = param(config, "name");
-	if (name) {
-		const lower = name.toLowerCase();
-		items = items.filter((p) => p.name.toLowerCase().includes(lower));
-	}
-
-	// price range
+	const collectionIds = parseJsonParam(param(config, "collection_ids"));
+	const productIds = parseJsonParam(param(config, "product_ids"));
+	const vendorIds = parseJsonParam(param(config, "vendor_ids"));
+	const name = param(config, "name")?.toLowerCase();
 	const fromPrice = numParam(config, "from_price");
 	const toPrice = numParam(config, "to_price");
-	if (fromPrice !== undefined) {
-		items = items.filter(
-			(p) => (p.variants[0]?.retail_price ?? 0) >= fromPrice,
-		);
-	}
-	if (toPrice !== undefined) {
-		items = items.filter((p) => (p.variants[0]?.retail_price ?? 0) <= toPrice);
-	}
-
-	// is_visible
 	const isVisible = numParam(config, "is_visible");
-	if (isVisible === 1) {
-		items = items.filter((p) => p.is_visible);
-	}
+
+	const items = MOCK_PRODUCTS.filter((p) => {
+		if (
+			collectionIds.length > 0 &&
+			!p.collection_ids.some((cid) => collectionIds.includes(cid))
+		)
+			return false;
+		if (productIds.length > 0 && !productIds.includes(p.id)) return false;
+		if (vendorIds.length > 0 && !vendorIds.includes(p.vendor_id)) return false;
+		if (name && !p.name.toLowerCase().includes(name)) return false;
+		const price = p.variants[0]?.retail_price ?? 0;
+		if (fromPrice !== undefined && price < fromPrice) return false;
+		if (toPrice !== undefined && price > toPrice) return false;
+		if (isVisible === 1 && !p.is_visible) return false;
+		return true;
+	});
 
 	const total = items.length;
-
-	// pagination
 	const limit = numParam(config, "limit") ?? 21;
 	const offset = numParam(config, "offset") ?? 0;
-	items = items.slice(offset, offset + limit);
 
-	return { items, paging: { total, limit, offset } };
+	return {
+		items: items.slice(offset, offset + limit),
+		paging: { total, limit, offset },
+	};
 };
 
 /* ------------------------------------------------------------------ */

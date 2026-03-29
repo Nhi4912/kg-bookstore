@@ -30,6 +30,7 @@ const SubscriptionForm = () => {
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					placeholder="Email"
+					aria-label="Email"
 					required
 					className="flex-1 rounded-md border px-4 py-3 text-sm outline-none focus:border-[var(--color-brand-green)]"
 				/>

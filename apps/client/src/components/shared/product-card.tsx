@@ -54,6 +54,7 @@ const ProductCard = ({ product }: { product: ProductResponse }) => {
 				<button
 					onClick={handleAddToCart}
 					disabled={!firstVariant}
+					aria-label={`Thêm ${product.name} vào giỏ hàng`}
 					className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md bg-[var(--color-brand-green)] px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--color-brand-green)]/90 disabled:opacity-50"
 				>
 					<ShoppingCart size={14} />

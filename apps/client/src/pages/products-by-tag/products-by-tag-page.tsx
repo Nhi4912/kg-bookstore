@@ -1,5 +1,5 @@
 import { FilterIcon, Loader2, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductFilter from "@/components/shared/product-filter";
 import ProductGrid from "@/components/shared/product-grid";
@@ -37,6 +37,16 @@ const ProductsByTagPage = () => {
 		handleChangeVendors,
 		clearFilter,
 	} = useProductQuery(defaultQuery);
+
+	// Close mobile filter on Escape
+	useEffect(() => {
+		if (!mobileFilterOpen) return;
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === "Escape") setMobileFilterOpen(false);
+		};
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [mobileFilterOpen]);
 
 	return (
 		<div className="mx-auto max-w-7xl px-4 py-8">
@@ -112,10 +122,13 @@ const ProductsByTagPage = () => {
 						className="fixed inset-0 z-50 bg-black/40"
 						onClick={() => setMobileFilterOpen(false)}
 					/>
-					<div className="fixed inset-y-0 left-0 z-50 w-[280px] overflow-y-auto bg-white p-5 shadow-xl">
+					<div className="fixed inset-y-0 left-0 z-50 w-[min(280px,85vw)] overflow-y-auto bg-white p-5 shadow-xl">
 						<div className="mb-4 flex items-center justify-between">
 							<h3 className="text-lg font-semibold">Bộ lọc</h3>
-							<button onClick={() => setMobileFilterOpen(false)}>
+							<button
+								onClick={() => setMobileFilterOpen(false)}
+								aria-label="Đóng bộ lọc"
+							>
 								<X size={20} />
 							</button>
 						</div>

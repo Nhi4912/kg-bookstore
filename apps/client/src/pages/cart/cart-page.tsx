@@ -3,6 +3,7 @@ import { CheckCircle, Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import { z } from "zod/v4";
 import { useCreateOrder } from "@/hooks/use-create-order";
 import { formatCurrency } from "@/lib/format";
@@ -78,6 +79,7 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 							onClick={() => updateQuantity(item.id, item.qty - 1)}
 							disabled={item.qty <= 1}
 							className="rounded border p-1 disabled:opacity-40"
+							aria-label="Giảm số lượng"
 						>
 							<Minus size={14} />
 						</button>
@@ -87,6 +89,7 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 						<button
 							onClick={() => updateQuantity(item.id, item.qty + 1)}
 							className="rounded border p-1"
+							aria-label="Tăng số lượng"
 						>
 							<Plus size={14} />
 						</button>
@@ -108,6 +111,9 @@ const CartPage = () => {
 		onSuccess: () => {
 			clearCart();
 			setShowSuccess(true);
+		},
+		onError: () => {
+			toast.error("Đặt hàng thất bại. Vui lòng thử lại.");
 		},
 	});
 
@@ -208,6 +214,7 @@ const CartPage = () => {
 									<input
 										{...register("last_name")}
 										placeholder="Họ"
+										aria-label="Họ"
 										className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
 									/>
 									{errors.last_name && (
@@ -220,6 +227,7 @@ const CartPage = () => {
 									<input
 										{...register("first_name")}
 										placeholder="Tên"
+										aria-label="Tên"
 										className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
 									/>
 									{errors.first_name && (
@@ -234,6 +242,7 @@ const CartPage = () => {
 								<input
 									{...register("phone_number")}
 									placeholder="Số điện thoại"
+									aria-label="Số điện thoại"
 									className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
 								/>
 								{errors.phone_number && (
@@ -247,6 +256,7 @@ const CartPage = () => {
 								<input
 									{...register("address")}
 									placeholder="Địa chỉ"
+									aria-label="Địa chỉ"
 									className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
 								/>
 								{errors.address && (

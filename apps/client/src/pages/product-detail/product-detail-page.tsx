@@ -175,7 +175,7 @@ const ProductDetailPage = () => {
 							className="h-auto max-h-[300px] w-auto max-w-full object-contain"
 						/>
 					) : (
-						<div className="flex h-[300px] w-[300px] items-center justify-center rounded bg-gray-100 text-gray-400">
+						<div className="flex max-w-[300px] items-center justify-center rounded bg-gray-100 text-gray-400">
 							Không có ảnh
 						</div>
 					)}
@@ -195,14 +195,17 @@ const ProductDetailPage = () => {
 					<p className="mb-1 text-2xl font-bold text-[var(--color-brand-green)]">
 						{formatCurrency(price)}
 					</p>
-					<p className="mb-4 text-sm text-green-600">Còn hàng</p>
+					<p className="mb-4 text-sm text-[var(--color-brand-green)]">
+						Còn hàng
+					</p>
 
 					{/* Quantity */}
 					<div className="mb-4 flex items-center gap-3">
 						<button
 							onClick={() => setQty((q) => Math.max(1, q - 1))}
 							disabled={qty <= 1}
-							className="rounded border p-2 disabled:opacity-40"
+							className="rounded border p-2.5 disabled:opacity-40"
+							aria-label="Giảm số lượng"
 						>
 							<Minus size={16} />
 						</button>
@@ -211,7 +214,8 @@ const ProductDetailPage = () => {
 						</span>
 						<button
 							onClick={() => setQty((q) => q + 1)}
-							className="rounded border p-2"
+							className="rounded border p-2.5"
+							aria-label="Tăng số lượng"
 						>
 							<Plus size={16} />
 						</button>
@@ -235,6 +239,7 @@ const ProductDetailPage = () => {
 					<button
 						onClick={handleAddToCart}
 						disabled={!selectedVariant}
+						aria-label={`Thêm ${product.name} vào giỏ hàng`}
 						className="flex items-center gap-2 rounded-md bg-[var(--color-brand-green)] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[var(--color-brand-green)]/90 disabled:opacity-50"
 					>
 						<ShoppingCart size={18} />

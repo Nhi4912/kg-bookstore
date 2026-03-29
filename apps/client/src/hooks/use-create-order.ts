@@ -12,10 +12,14 @@ export interface CheckoutFormValues {
 	payment_method: string;
 }
 
-export const useCreateOrder = (opts?: { onSuccess?: () => void }) =>
+export const useCreateOrder = (opts?: {
+	onSuccess?: () => void;
+	onError?: () => void;
+}) =>
 	useMutation({
 		mutationKey: ["create-order"],
 		mutationFn: (data: CheckoutFormValues) =>
 			apiClient.post("/orders", data).then((r) => r.data),
 		onSuccess: () => opts?.onSuccess?.(),
+		onError: () => opts?.onError?.(),
 	});

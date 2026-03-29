@@ -2,7 +2,7 @@
 
 > So sánh tính năng giữa **Legacy Repo** (`apollo-frontend-client`) và **New Monorepo** (`kgbookstore`).
 >
-> Cập nhật lần cuối: 2026-03-29
+> Cập nhật lần cuối: 2026-03-29 (gap features implemented)
 
 ## Legend
 
@@ -64,7 +64,7 @@
 | Sản phẩm theo tag         | ✅     | ✅         | `SpecialCategory` → `products-by-tag`                      |
 | Form đăng ký nhận tin     | ✅     | ✅         |                                                            |
 | Banner khuyến mãi         | ✅     | 🔶         | Legacy: `Discount` component; New: placeholder banners chỉ |
-| Skeleton loading (banner) | ✅     | ❌         | Legacy: `BannerSkeleton`; New: chưa có skeleton cho banner |
+| Skeleton loading (banner) | ✅     | ✅         | Preloads images, shows pulse skeleton until loaded         |
 
 ---
 
@@ -89,17 +89,17 @@
 
 ### 1.5 Tìm kiếm & Lọc (Search & Filter)
 
-| Feature                        | Legacy | New Client | Notes                                             |
-| ------------------------------ | ------ | ---------- | ------------------------------------------------- |
-| Search box trong header        | ✅     | ✅         |                                                   |
-| Search autocomplete dropdown   | ✅     | ❌         | Legacy: hiển thị kết quả gợi ý; New: chỉ navigate |
-| Debounced search               | ✅     | ✅         | Legacy: 200ms; New: custom `useDebounce`          |
-| Trang kết quả tìm kiếm         | ✅     | ✅         |                                                   |
-| Lọc theo nhà cung cấp (vendor) | ✅     | ✅         |                                                   |
-| Lọc theo khoảng giá            | ✅     | ✅         |                                                   |
-| Xóa bộ lọc                     | ✅     | ✅         |                                                   |
-| Mobile filter drawer           | ✅     | ✅         |                                                   |
-| Load more pagination           | ✅     | ✅         |                                                   |
+| Feature                        | Legacy | New Client | Notes                                                      |
+| ------------------------------ | ------ | ---------- | ---------------------------------------------------------- |
+| Search box trong header        | ✅     | ✅         |                                                            |
+| Search autocomplete dropdown   | ✅     | ✅         | Debounced (200ms), shows image+name+price, "Xem thêm" link |
+| Debounced search               | ✅     | ✅         | Legacy: 200ms; New: custom `useDebounce`                   |
+| Trang kết quả tìm kiếm         | ✅     | ✅         |                                                            |
+| Lọc theo nhà cung cấp (vendor) | ✅     | ✅         |                                                            |
+| Lọc theo khoảng giá            | ✅     | ✅         |                                                            |
+| Xóa bộ lọc                     | ✅     | ✅         |                                                            |
+| Mobile filter drawer           | ✅     | ✅         |                                                            |
+| Load more pagination           | ✅     | ✅         |                                                            |
 
 ---
 
@@ -130,13 +130,13 @@
 | Carousel/Slider    | ✅     | ✅         | Legacy: react-multi-carousel; New: CSS-based       |
 | Modal/Dialog       | ✅     | 🔶         | Legacy: DynamicModal + queue system; New: cơ bản   |
 | Drawer/Sidenav     | ✅     | ✅         |                                                    |
-| Accordion          | ✅     | ❌         | Legacy: custom Accordion component                 |
+| Accordion          | ✅     | ✅         | Tailwind-based, animated height transition         |
 | Skeleton loading   | ✅     | ✅         |                                                    |
 | Custom icons (90+) | ✅     | ❌         | Legacy: 90+ custom SVG icons; New: dùng emoji/text |
 | Sticky wrapper     | ✅     | ✅         | Tích hợp trong header                              |
 | FlexBox helper     | ✅     | ❌         | New: dùng Tailwind flex classes thay thế           |
 | Typography helpers | ✅     | ❌         | New: dùng Tailwind typography thay thế             |
-| Toast/Snackbar     | ❌     | ❌         | Cả hai đều thiếu toast notification system         |
+| Toast/Snackbar     | ❌     | ✅ 🆕      | Sonner toast on add-to-cart + order failure        |
 
 ---
 
@@ -210,15 +210,15 @@
 
 ### Features từ Legacy chưa được triển khai trong New Client
 
-| #   | Feature                      | Priority | Effort | Notes                                      |
-| --- | ---------------------------- | -------- | ------ | ------------------------------------------ |
-| 1   | Search autocomplete dropdown | Medium   | Small  | Hiển thị kết quả gợi ý khi gõ search       |
-| 2   | Banner khuyến mãi thực tế    | Low      | Small  | Thay thế placeholder banners bằng ảnh thật |
-| 3   | Banner skeleton loading      | Low      | Small  | Skeleton cho hero carousel khi loading     |
-| 4   | Accordion component          | Low      | Small  | Có thể cần cho FAQ hoặc product info       |
-| 5   | Custom SVG icon library      | Low      | Medium | Legacy có 90+ icons; New dùng text/emoji   |
-| 6   | Modal queue system           | Low      | Medium | Legacy quản lý nhiều modal tuần tự         |
-| 7   | Toast/Snackbar notification  | Medium   | Small  | Cả hai đều thiếu — nên thêm cho UX tốt hơn |
+| #     | Feature                          | Priority   | Effort    | Notes                                      |
+| ----- | -------------------------------- | ---------- | --------- | ------------------------------------------ |
+| ~~1~~ | ~~Search autocomplete dropdown~~ | ~~Medium~~ | ~~Small~~ | ✅ Đã triển khai                           |
+| 2     | Banner khuyến mãi thực tế        | Low        | Small     | Thay thế placeholder banners bằng ảnh thật |
+| ~~3~~ | ~~Banner skeleton loading~~      | ~~Low~~    | ~~Small~~ | ✅ Đã triển khai                           |
+| ~~4~~ | ~~Accordion component~~          | ~~Low~~    | ~~Small~~ | ✅ Đã triển khai                           |
+| 5     | Custom SVG icon library          | Low        | Medium    | Legacy có 90+ icons; New dùng lucide-react |
+| 6     | Modal queue system               | Low        | Medium    | Legacy quản lý nhiều modal tuần tự         |
+| ~~7~~ | ~~Toast/Snackbar notification~~  | ~~Medium~~ | ~~Small~~ | ✅ Đã triển khai (Sonner)                  |
 
 ### Features MỚI trong New (không có trong Legacy)
 

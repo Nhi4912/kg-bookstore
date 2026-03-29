@@ -1,6 +1,7 @@
 import type { ProductResponse } from "@kgbookstore/api-contract";
 import { ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import { formatCurrency } from "@/lib/format";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -21,6 +22,7 @@ const ProductCard = ({ product }: { product: ProductResponse }) => {
 			price,
 			imgUrl: imageUrl ?? undefined,
 		});
+		toast.success(`Đã thêm "${product.name}" vào giỏ hàng`);
 	};
 
 	return (

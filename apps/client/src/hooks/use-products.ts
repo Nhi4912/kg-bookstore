@@ -10,6 +10,7 @@ export const productKeys = {
 	list: (params?: Record<string, unknown>) =>
 		[...productKeys.all, params] as const,
 	detail: (id: string) => [...productKeys.all, "detail", id] as const,
+	search: (name: string) => [...productKeys.all, "search", name] as const,
 };
 
 export const useProducts = (params?: {
@@ -39,6 +40,19 @@ export const useProducts = (params?: {
 		staleTime: Infinity,
 	});
 };
+
+export const useSearchProducts = (name: string) =>
+	useQuery({
+		queryKey: productKeys.search(name),
+		queryFn: () =>
+			apiClient
+				.get<ProductListResponse>("/products", {
+					params: { limit: 4, offset: 0, name, is_visible: 1 },
+				})
+				.then((r) => r.data),
+		enabled: name.length >= 2,
+		staleTime: 30_000,
+	});
 
 export const useProductDetail = (id: string) =>
 	useQuery({

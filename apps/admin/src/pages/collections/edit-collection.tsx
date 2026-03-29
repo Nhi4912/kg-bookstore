@@ -1,9 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { UpdateCollectionRequest } from "@kgbookstore/api-contract";
 import { updateCollectionRequestSchema } from "@kgbookstore/api-contract";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import ConfirmDialog from "@/components/shared/confirm-dialog";
+import LoadingState from "@/components/shared/loading-state";
+import NotFoundState from "@/components/shared/not-found-state";
 import PageWrapper from "@/components/shared/page-wrapper";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +23,7 @@ const EditCollectionPage = () => {
 	const { data: collection, isLoading } = useCollectionDetail(id ?? "");
 	const updateMutation = useUpdateCollection();
 	const deleteMutation = useDeleteCollection();
+	const [deleteOpen, setDeleteOpen] = useState(false);
 
 	const form = useForm<UpdateCollectionRequest>({
 		resolver: zodResolver(updateCollectionRequestSchema),
@@ -47,7 +52,6 @@ const EditCollectionPage = () => {
 
 	const handleDelete = async () => {
 		if (!id) return;
-		if (!window.confirm("Bạn có chắc chắn muốn xoá nhóm sản phẩm này?")) return;
 		try {
 			await deleteMutation.mutateAsync(id);
 			toast.success("Đã xoá nhóm sản phẩm");
@@ -60,9 +64,7 @@ const EditCollectionPage = () => {
 	if (isLoading) {
 		return (
 			<PageWrapper title="Chỉnh sửa nhóm sản phẩm">
-				<div className="flex justify-center py-12">
-					<p className="text-muted-foreground">Đang tải...</p>
-				</div>
+				<LoadingState />
 			</PageWrapper>
 		);
 	}
@@ -70,9 +72,7 @@ const EditCollectionPage = () => {
 	if (!collection) {
 		return (
 			<PageWrapper title="Chỉnh sửa nhóm sản phẩm">
-				<div className="flex justify-center py-12">
-					<p className="text-muted-foreground">Không tìm thấy nhóm sản phẩm</p>
-				</div>
+				<NotFoundState message="Không tìm thấy nhóm sản phẩm" />
 			</PageWrapper>
 		);
 	}
@@ -84,7 +84,7 @@ const EditCollectionPage = () => {
 				<div className="flex items-center gap-2">
 					<Button
 						variant="destructive"
-						onClick={handleDelete}
+						onClick={() => setDeleteOpen(true)}
 						disabled={deleteMutation.isPending}
 					>
 						Xoá
@@ -104,6 +104,16 @@ const EditCollectionPage = () => {
 			<FormProvider {...form}>
 				<CollectionFormFields />
 			</FormProvider>
+
+			<ConfirmDialog
+				open={deleteOpen}
+				onOpenChange={setDeleteOpen}
+				title="Xoá nhóm sản phẩm"
+				description="Bạn có chắc chắn muốn xoá nhóm sản phẩm này? Hành động này không thể hoàn tác."
+				confirmLabel="Xoá"
+				isPending={deleteMutation.isPending}
+				onConfirm={handleDelete}
+			/>
 		</PageWrapper>
 	);
 };

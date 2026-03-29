@@ -10,21 +10,21 @@ import {
 	SHIPMENT_STATUS_LABELS,
 	SHIPMENT_STATUS_VARIANT,
 } from "@/constants/order";
-import { formatCurrency, formatDate } from "@/lib/format";
+import {
+	calculateBillTotal,
+	formatAddress,
+	formatCurrency,
+	formatCustomerName,
+	formatDate,
+} from "@/lib/format";
 
 interface OrderCardProps {
 	order: OrderResponse;
 }
 
 const OrderCard = ({ order }: OrderCardProps) => {
-	const customerName = order.customer
-		? `${order.customer.last_name} ${order.customer.first_name}`
-		: "—";
-
-	const totalAmount = order.bill_items.reduce(
-		(sum, item) => sum + item.final_price,
-		0,
-	);
+	const customerName = formatCustomerName(order.customer);
+	const totalAmount = calculateBillTotal(order.bill_items);
 
 	const shippingBill = order.bill_items.find(
 		(item) => item.type === "SHIPPING_BILL",
@@ -50,7 +50,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
 						<Badge variant={ORDER_STATUS_VARIANT[order.status] ?? "secondary"}>
 							{ORDER_STATUS_LABELS[order.status] ?? order.status}
 						</Badge>
-						{order.shipment && (
+						{order.shipment ? (
 							<Badge
 								variant={
 									SHIPMENT_STATUS_VARIANT[order.shipment.status] ?? "outline"
@@ -59,7 +59,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
 								{SHIPMENT_STATUS_LABELS[order.shipment.status] ??
 									order.shipment.status}
 							</Badge>
-						)}
+						) : null}
 					</div>
 				</div>
 
@@ -72,31 +72,24 @@ const OrderCard = ({ order }: OrderCardProps) => {
 							<span className="text-muted-foreground">Tên: </span>
 							{customerName}
 						</p>
-						{order.shipment?.address && (
+						{order.shipment?.address ? (
 							<p>
 								<span className="text-muted-foreground">Địa chỉ: </span>
-								{[
-									order.shipment.address,
-									order.shipment.ward_name,
-									order.shipment.district_name,
-									order.shipment.province_name,
-								]
-									.filter(Boolean)
-									.join(", ")}
+								{formatAddress(order.shipment)}
 							</p>
-						)}
-						{order.customer?.phone_number && (
+						) : null}
+						{order.customer?.phone_number ? (
 							<p>
 								<span className="text-muted-foreground">SĐT: </span>
 								{order.customer.phone_number}
 							</p>
-						)}
-						{order.note && (
+						) : null}
+						{order.note ? (
 							<p>
 								<span className="text-muted-foreground">Ghi chú: </span>
 								{order.note}
 							</p>
-						)}
+						) : null}
 					</div>
 
 					{/* Right: order items */}
@@ -104,26 +97,30 @@ const OrderCard = ({ order }: OrderCardProps) => {
 						<div className="space-y-2">
 							{order.order_items.map((item) => (
 								<div key={item.id} className="flex items-center gap-3 text-sm">
-									{item.image?.url && (
+									{item.image?.url ? (
 										<img
 											src={item.image.url}
 											alt={item.product_name}
 											className="h-10 w-10 rounded border object-cover"
+											width={40}
+											height={40}
 										/>
+									) : (
+										<div className="h-10 w-10 rounded bg-muted" />
 									)}
 									<div className="flex-1">
 										<p className="font-medium">{item.product_name}</p>
 										{item.attribute_values &&
-											item.attribute_values.length > 0 && (
-												<p className="text-xs text-muted-foreground">
-													{item.attribute_values
-														.map(
-															(av) =>
-																`${av.attribute_name}: ${av.attribute_value}`,
-														)
-														.join(", ")}
-												</p>
-											)}
+										item.attribute_values.length > 0 ? (
+											<p className="text-xs text-muted-foreground">
+												{item.attribute_values
+													.map(
+														(av) =>
+															`${av.attribute_name}: ${av.attribute_value}`,
+													)
+													.join(", ")}
+											</p>
+										) : null}
 									</div>
 									<span className="text-muted-foreground">
 										x{item.quantity}
@@ -146,11 +143,11 @@ const OrderCard = ({ order }: OrderCardProps) => {
 											] ?? order.bill_items[0].payment_method)
 										: "—"}
 								</span>
-								{shippingBill && (
+								{shippingBill ? (
 									<span className="text-muted-foreground">
 										Phí giao hàng: {formatCurrency(shippingBill.final_price)}
 									</span>
-								)}
+								) : null}
 							</div>
 							<span className="font-semibold">
 								Tổng: {formatCurrency(totalAmount)}

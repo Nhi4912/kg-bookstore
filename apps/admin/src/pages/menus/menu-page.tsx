@@ -4,6 +4,9 @@ import { Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import CollectionSelectionDialog from "@/components/shared/collection-selection-dialog";
+import EmptyState from "@/components/shared/empty-state";
+import ErrorState from "@/components/shared/error-state";
+import LoadingState from "@/components/shared/loading-state";
 import PageWrapper from "@/components/shared/page-wrapper";
 import PaperSection from "@/components/shared/paper-section";
 import { Button } from "@/components/ui/button";
@@ -26,7 +29,7 @@ const getCollectionIds = (nodes: MenuTreeNode[]): string[] =>
 // ─── Component ───
 
 const MenuPage = () => {
-	const { data: menuData, isLoading } = useMenu();
+	const { data: menuData, isLoading, isError, refetch } = useMenu();
 	const upsertMenu = useUpsertMenu();
 
 	const [treeData, setTreeData] = useState<MenuTreeNode[]>([]);
@@ -110,14 +113,11 @@ const MenuPage = () => {
 		>
 			<PaperSection>
 				{isLoading ? (
-					<p className="text-sm text-muted-foreground py-8 text-center">
-						Đang tải danh mục...
-					</p>
+					<LoadingState message="Đang tải danh mục..." />
+				) : isError ? (
+					<ErrorState onRetry={() => refetch()} />
 				) : treeData.length === 0 ? (
-					<p className="text-sm text-muted-foreground py-8 text-center">
-						Chưa có danh mục nào. Bấm &ldquo;Thêm nhóm sản phẩm&rdquo; để bắt
-						đầu.
-					</p>
+					<EmptyState message='Chưa có danh mục nào. Bấm "Thêm nhóm sản phẩm" để bắt đầu.' />
 				) : (
 					<Tree
 						treeData={treeData}

@@ -1,10 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { UpdateProductRequest } from "@kgbookstore/api-contract";
 import { updateProductRequestSchema } from "@kgbookstore/api-contract";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import ConfirmDialog from "@/components/shared/confirm-dialog";
+import LoadingState from "@/components/shared/loading-state";
+import NotFoundState from "@/components/shared/not-found-state";
 import PageWrapper from "@/components/shared/page-wrapper";
 import PaperSection from "@/components/shared/paper-section";
 import { Button } from "@/components/ui/button";
@@ -23,6 +26,7 @@ const EditProductPage = () => {
 	const { data: product, isLoading } = useProductDetail(id!);
 	const updateMutation = useUpdateProduct();
 	const deleteMutation = useDeleteProduct();
+	const [deleteOpen, setDeleteOpen] = useState(false);
 
 	const methods = useForm<UpdateProductRequest>({
 		resolver: zodResolver(updateProductRequestSchema),
@@ -63,7 +67,6 @@ const EditProductPage = () => {
 	};
 
 	const handleDelete = async () => {
-		if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
 		try {
 			await deleteMutation.mutateAsync(id!);
 			toast.success("Đã xóa sản phẩm");
@@ -76,9 +79,7 @@ const EditProductPage = () => {
 	if (isLoading) {
 		return (
 			<PageWrapper title="Chỉnh sửa sản phẩm">
-				<div className="py-10 text-center text-muted-foreground">
-					Đang tải...
-				</div>
+				<LoadingState />
 			</PageWrapper>
 		);
 	}
@@ -86,9 +87,7 @@ const EditProductPage = () => {
 	if (!product) {
 		return (
 			<PageWrapper title="Chỉnh sửa sản phẩm">
-				<div className="py-10 text-center text-muted-foreground">
-					Không tìm thấy sản phẩm
-				</div>
+				<NotFoundState message="Không tìm thấy sản phẩm" />
 			</PageWrapper>
 		);
 	}
@@ -98,7 +97,7 @@ const EditProductPage = () => {
 			title="Chỉnh sửa sản phẩm"
 			action={
 				<div className="flex items-center gap-2">
-					<Button variant="destructive" onClick={handleDelete}>
+					<Button variant="destructive" onClick={() => setDeleteOpen(true)}>
 						Xóa
 					</Button>
 					<Button variant="outline" onClick={() => navigate(ROUTES.PRODUCTS)}>
@@ -123,6 +122,16 @@ const EditProductPage = () => {
 			<PaperSection title="Biến thể" className="mt-6">
 				<VariantList productId={id!} variants={product.variants ?? []} />
 			</PaperSection>
+
+			<ConfirmDialog
+				open={deleteOpen}
+				onOpenChange={setDeleteOpen}
+				title="Xóa sản phẩm"
+				description="Bạn có chắc chắn muốn xóa sản phẩm này? Hành động này không thể hoàn tác."
+				confirmLabel="Xóa"
+				isPending={deleteMutation.isPending}
+				onConfirm={handleDelete}
+			/>
 		</PageWrapper>
 	);
 };

@@ -1,7 +1,10 @@
 import type { VariantResponse } from "@kgbookstore/api-contract";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import ConfirmDialog from "@/components/shared/confirm-dialog";
+import EmptyState from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,12 +26,14 @@ interface VariantListProps {
 
 const VariantList = ({ productId, variants }: VariantListProps) => {
 	const deleteMutation = useDeleteProductVariant(productId);
+	const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
-	const handleDelete = async (variantId: string) => {
-		if (!confirm("Bạn có chắc chắn muốn xóa biến thể này?")) return;
+	const handleDelete = async () => {
+		if (!deleteTarget) return;
 		try {
-			await deleteMutation.mutateAsync(variantId);
+			await deleteMutation.mutateAsync(deleteTarget);
 			toast.success("Đã xóa biến thể");
+			setDeleteTarget(null);
 		} catch {
 			toast.error("Không thể xóa biến thể");
 		}
@@ -91,14 +96,15 @@ const VariantList = ({ productId, variants }: VariantListProps) => {
 											render={
 												<Link to={ROUTES.VARIANT_EDIT(productId, variant.id)} />
 											}
+											aria-label="Sửa biến thể"
 										>
-											<span className="sr-only">Sửa</span>
-											✏️
+											<Pencil className="size-3.5" />
 										</Button>
 										<Button
 											size="icon-xs"
 											variant="ghost"
-											onClick={() => handleDelete(variant.id)}
+											onClick={() => setDeleteTarget(variant.id)}
+											aria-label="Xóa biến thể"
 										>
 											<Trash2 className="size-3.5 text-destructive" />
 										</Button>
@@ -109,10 +115,20 @@ const VariantList = ({ productId, variants }: VariantListProps) => {
 					</TableBody>
 				</Table>
 			) : (
-				<p className="py-6 text-center text-sm text-muted-foreground">
-					Chưa có biến thể nào
-				</p>
+				<EmptyState message="Chưa có biến thể nào" />
 			)}
+
+			<ConfirmDialog
+				open={deleteTarget !== null}
+				onOpenChange={(open) => {
+					if (!open) setDeleteTarget(null);
+				}}
+				title="Xóa biến thể"
+				description="Bạn có chắc chắn muốn xóa biến thể này? Hành động này không thể hoàn tác."
+				confirmLabel="Xóa"
+				isPending={deleteMutation.isPending}
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 };

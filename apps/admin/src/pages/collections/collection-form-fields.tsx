@@ -34,12 +34,6 @@ const CollectionFormFields = () => {
 							options={[...TAG_OPTIONS]}
 							required
 						/>
-						<SelectHF
-							name="tag"
-							label="Tag"
-							options={[...TAG_OPTIONS]}
-							required
-						/>
 						<TextareaHF
 							name="description"
 							label="Mô tả nhóm sản phẩm"

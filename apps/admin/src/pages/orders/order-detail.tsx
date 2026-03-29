@@ -1,6 +1,9 @@
 import type { OrderStatus } from "@kgbookstore/api-contract";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import ErrorState from "@/components/shared/error-state";
+import LoadingState from "@/components/shared/loading-state";
+import NotFoundState from "@/components/shared/not-found-state";
 import PageWrapper from "@/components/shared/page-wrapper";
 import PaperSection from "@/components/shared/paper-section";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +24,13 @@ import {
 	SHIPMENT_STATUS_VARIANT,
 } from "@/constants/order";
 import { useOrderDetail, useUpdateOrder } from "@/hooks/use-orders";
-import { formatCurrency, formatDate } from "@/lib/format";
+import {
+	calculateBillTotal,
+	formatAddress,
+	formatCurrency,
+	formatCustomerName,
+	formatDate,
+} from "@/lib/format";
 
 const ORDER_STATUS_VALUES: OrderStatus[] = [
 	"PENDING",
@@ -33,7 +42,7 @@ const ORDER_STATUS_VALUES: OrderStatus[] = [
 const OrderDetailPage = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
-	const { data: order, isLoading } = useOrderDetail(id ?? "");
+	const { data: order, isLoading, isError, refetch } = useOrderDetail(id ?? "");
 	const updateOrder = useUpdateOrder();
 
 	const handleStatusChange = async (newStatus: string | null) => {
@@ -52,9 +61,15 @@ const OrderDetailPage = () => {
 	if (isLoading) {
 		return (
 			<PageWrapper title="Chi tiết đơn hàng">
-				<div className="py-8 text-center text-muted-foreground">
-					Đang tải...
-				</div>
+				<LoadingState />
+			</PageWrapper>
+		);
+	}
+
+	if (isError) {
+		return (
+			<PageWrapper title="Chi tiết đơn hàng">
+				<ErrorState onRetry={() => refetch()} />
 			</PageWrapper>
 		);
 	}
@@ -62,21 +77,13 @@ const OrderDetailPage = () => {
 	if (!order) {
 		return (
 			<PageWrapper title="Chi tiết đơn hàng">
-				<div className="py-8 text-center text-muted-foreground">
-					Không tìm thấy đơn hàng
-				</div>
+				<NotFoundState message="Không tìm thấy đơn hàng" />
 			</PageWrapper>
 		);
 	}
 
-	const customerName = order.customer
-		? `${order.customer.last_name} ${order.customer.first_name}`
-		: "—";
-
-	const totalAmount = order.bill_items.reduce(
-		(sum, item) => sum + item.final_price,
-		0,
-	);
+	const customerName = formatCustomerName(order.customer);
+	const totalAmount = calculateBillTotal(order.bill_items);
 
 	return (
 		<PageWrapper
@@ -103,6 +110,8 @@ const OrderDetailPage = () => {
 											src={item.image.url}
 											alt={item.product_name}
 											className="h-12 w-12 rounded border object-cover"
+											width={48}
+											height={48}
 										/>
 									) : (
 										<div className="h-12 w-12 rounded bg-muted" />
@@ -110,16 +119,16 @@ const OrderDetailPage = () => {
 									<div className="flex-1">
 										<p className="font-medium">{item.product_name}</p>
 										{item.attribute_values &&
-											item.attribute_values.length > 0 && (
-												<p className="text-xs text-muted-foreground">
-													{item.attribute_values
-														.map(
-															(av) =>
-																`${av.attribute_name}: ${av.attribute_value}`,
-														)
-														.join(", ")}
-												</p>
-											)}
+										item.attribute_values.length > 0 ? (
+											<p className="text-xs text-muted-foreground">
+												{item.attribute_values
+													.map(
+														(av) =>
+															`${av.attribute_name}: ${av.attribute_value}`,
+													)
+													.join(", ")}
+											</p>
+										) : null}
 									</div>
 									<span className="text-sm text-muted-foreground">
 										x{item.quantity}
@@ -163,7 +172,7 @@ const OrderDetailPage = () => {
 								</Badge>
 							</div>
 
-							{order.shipment && (
+							{order.shipment ? (
 								<div className="flex items-center justify-between">
 									<span className="text-sm text-muted-foreground">
 										Giao hàng
@@ -178,7 +187,7 @@ const OrderDetailPage = () => {
 											order.shipment.status}
 									</Badge>
 								</div>
-							)}
+							) : null}
 
 							<div className="flex items-center justify-between">
 								<span className="text-sm text-muted-foreground">
@@ -194,11 +203,14 @@ const OrderDetailPage = () => {
 							</div>
 
 							<div className="border-t pt-3">
-								<label className="mb-1 block text-sm font-medium">
+								<label
+									htmlFor="order-status-select"
+									className="mb-1 block text-sm font-medium"
+								>
 									Cập nhật trạng thái
 								</label>
 								<Select value={order.status} onValueChange={handleStatusChange}>
-									<SelectTrigger>
+									<SelectTrigger id="order-status-select">
 										<SelectValue />
 									</SelectTrigger>
 									<SelectContent>
@@ -220,45 +232,38 @@ const OrderDetailPage = () => {
 								<span className="text-muted-foreground">Tên: </span>
 								{customerName}
 							</p>
-							{order.customer?.phone_number && (
+							{order.customer?.phone_number ? (
 								<p>
 									<span className="text-muted-foreground">SĐT: </span>
 									{order.customer.phone_number}
 								</p>
-							)}
-							{order.customer?.address && (
+							) : null}
+							{order.customer?.address ? (
 								<p>
 									<span className="text-muted-foreground">Địa chỉ: </span>
 									{order.customer.address}
 								</p>
-							)}
+							) : null}
 						</div>
 					</PaperSection>
 
 					{/* Shipping */}
-					{order.shipment && (
+					{order.shipment ? (
 						<PaperSection title="Giao hàng">
 							<div className="space-y-2 text-sm">
 								<p>
 									<span className="text-muted-foreground">Địa chỉ: </span>
-									{[
-										order.shipment.address,
-										order.shipment.ward_name,
-										order.shipment.district_name,
-										order.shipment.province_name,
-									]
-										.filter(Boolean)
-										.join(", ")}
+									{formatAddress(order.shipment)}
 								</p>
-								{order.shipment.phone_number && (
+								{order.shipment.phone_number ? (
 									<p>
 										<span className="text-muted-foreground">SĐT: </span>
 										{order.shipment.phone_number}
 									</p>
-								)}
+								) : null}
 							</div>
 						</PaperSection>
-					)}
+					) : null}
 
 					{/* Meta */}
 					<PaperSection title="Thông tin">
@@ -271,12 +276,12 @@ const OrderDetailPage = () => {
 								<span className="text-muted-foreground">Cập nhật: </span>
 								{formatDate(order.updated_at)}
 							</p>
-							{order.note && (
+							{order.note ? (
 								<p>
 									<span className="text-muted-foreground">Ghi chú: </span>
 									{order.note}
 								</p>
-							)}
+							) : null}
 						</div>
 					</PaperSection>
 				</div>

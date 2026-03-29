@@ -1,6 +1,9 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import EmptyState from "@/components/shared/empty-state";
+import ErrorState from "@/components/shared/error-state";
+import LoadingState from "@/components/shared/loading-state";
 import PageWrapper from "@/components/shared/page-wrapper";
 import PaperSection from "@/components/shared/paper-section";
 import TablePagination from "@/components/shared/table-pagination";
@@ -20,7 +23,7 @@ const OrderListPage = () => {
 
 	const debouncedKeyword = useDebounce(keyword);
 
-	const { data, isLoading } = useOrders({
+	const { data, isLoading, isError, refetch } = useOrders({
 		limit,
 		offset,
 		keyword: debouncedKeyword || undefined,
@@ -55,13 +58,11 @@ const OrderListPage = () => {
 					/>
 
 					{isLoading ? (
-						<div className="py-8 text-center text-muted-foreground">
-							Đang tải...
-						</div>
+						<LoadingState />
+					) : isError ? (
+						<ErrorState onRetry={() => refetch()} />
 					) : orders.length === 0 ? (
-						<div className="py-8 text-center text-muted-foreground">
-							Không có đơn hàng nào
-						</div>
+						<EmptyState message="Không có đơn hàng nào" />
 					) : (
 						<div className="space-y-3">
 							{orders.map((order) => (
@@ -70,7 +71,7 @@ const OrderListPage = () => {
 						</div>
 					)}
 
-					{total > 0 && (
+					{total > 0 ? (
 						<TablePagination
 							total={total}
 							limit={limit}
@@ -81,7 +82,7 @@ const OrderListPage = () => {
 							}}
 							onPageChange={setOffset}
 						/>
-					)}
+					) : null}
 				</div>
 			</PaperSection>
 		</PageWrapper>

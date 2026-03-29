@@ -1,10 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { UpdateVariantRequest } from "@kgbookstore/api-contract";
 import { updateVariantRequestSchema } from "@kgbookstore/api-contract";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import ConfirmDialog from "@/components/shared/confirm-dialog";
+import NotFoundState from "@/components/shared/not-found-state";
 import PageWrapper from "@/components/shared/page-wrapper";
 import PaperSection from "@/components/shared/paper-section";
 import { Button } from "@/components/ui/button";
@@ -26,6 +28,7 @@ const EditVariantPage = () => {
 	const { data: product } = useProductDetail(productId!);
 	const updateMutation = useUpdateProductVariant(productId!);
 	const deleteMutation = useDeleteProductVariant(productId!);
+	const [deleteOpen, setDeleteOpen] = useState(false);
 
 	const variant = product?.variants?.find((v) => v.id === variantId);
 
@@ -68,7 +71,6 @@ const EditVariantPage = () => {
 	};
 
 	const handleDelete = async () => {
-		if (!confirm("Bạn có chắc chắn muốn xóa biến thể này?")) return;
 		try {
 			await deleteMutation.mutateAsync(variantId!);
 			toast.success("Đã xóa biến thể");
@@ -81,9 +83,7 @@ const EditVariantPage = () => {
 	if (!variant && product) {
 		return (
 			<PageWrapper title="Chỉnh sửa biến thể">
-				<div className="py-10 text-center text-muted-foreground">
-					Không tìm thấy biến thể
-				</div>
+				<NotFoundState message="Không tìm thấy biến thể" />
 			</PageWrapper>
 		);
 	}
@@ -93,7 +93,7 @@ const EditVariantPage = () => {
 			title="Chỉnh sửa biến thể"
 			action={
 				<div className="flex items-center gap-2">
-					<Button variant="destructive" onClick={handleDelete}>
+					<Button variant="destructive" onClick={() => setDeleteOpen(true)}>
 						Xóa
 					</Button>
 					<Button
@@ -119,9 +119,9 @@ const EditVariantPage = () => {
 					<div className="space-y-1.5">
 						<Label htmlFor="sku">SKU</Label>
 						<Input id="sku" placeholder="Nhập SKU" {...register("sku")} />
-						{errors.sku && (
+						{errors.sku ? (
 							<p className="text-xs text-destructive">{errors.sku.message}</p>
-						)}
+						) : null}
 					</div>
 					<div className="space-y-1.5">
 						<Label htmlFor="barcode">Barcode</Label>
@@ -130,11 +130,11 @@ const EditVariantPage = () => {
 							placeholder="Nhập barcode"
 							{...register("barcode")}
 						/>
-						{errors.barcode && (
+						{errors.barcode ? (
 							<p className="text-xs text-destructive">
 								{errors.barcode.message}
 							</p>
-						)}
+						) : null}
 					</div>
 					<div className="space-y-1.5">
 						<Label htmlFor="retail_price">Giá bán</Label>
@@ -144,11 +144,11 @@ const EditVariantPage = () => {
 							placeholder="0"
 							{...register("retail_price", { valueAsNumber: true })}
 						/>
-						{errors.retail_price && (
+						{errors.retail_price ? (
 							<p className="text-xs text-destructive">
 								{errors.retail_price.message}
 							</p>
-						)}
+						) : null}
 					</div>
 					<div className="space-y-1.5">
 						<Label htmlFor="cost_price">Giá vốn</Label>
@@ -158,11 +158,11 @@ const EditVariantPage = () => {
 							placeholder="0"
 							{...register("cost_price", { valueAsNumber: true })}
 						/>
-						{errors.cost_price && (
+						{errors.cost_price ? (
 							<p className="text-xs text-destructive">
 								{errors.cost_price.message}
 							</p>
-						)}
+						) : null}
 					</div>
 					<div className="space-y-1.5">
 						<Label htmlFor="stock_quantity">Số lượng tồn kho</Label>
@@ -172,14 +172,24 @@ const EditVariantPage = () => {
 							placeholder="0"
 							{...register("stock_quantity", { valueAsNumber: true })}
 						/>
-						{errors.stock_quantity && (
+						{errors.stock_quantity ? (
 							<p className="text-xs text-destructive">
 								{errors.stock_quantity.message}
 							</p>
-						)}
+						) : null}
 					</div>
 				</form>
 			</PaperSection>
+
+			<ConfirmDialog
+				open={deleteOpen}
+				onOpenChange={setDeleteOpen}
+				title="Xóa biến thể"
+				description="Bạn có chắc chắn muốn xóa biến thể này? Hành động này không thể hoàn tác."
+				confirmLabel="Xóa"
+				isPending={deleteMutation.isPending}
+				onConfirm={handleDelete}
+			/>
 		</PageWrapper>
 	);
 };

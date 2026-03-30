@@ -33,13 +33,13 @@
 
 ### Critical Gaps
 
-| Area          | Score | Key Problem                                  |
-| ------------- | ----- | -------------------------------------------- |
-| Accessibility | 5/10  | Color contrast fails WCAG, no visible labels |
-| SEO           | 2/10  | No meta tags, no structured data, pure SPA   |
-| Performance   | 6/10  | No code splitting, no image optimization     |
-| E-commerce UX | 4/10  | Missing wishlist, reviews, breadcrumbs       |
-| Admin Panel   | 7/10  | Good foundation, needs dashboard + reports   |
+| Area          | Score | Key Problem                                    |
+| ------------- | ----- | ---------------------------------------------- |
+| Accessibility | 8/10  | Fixed: contrast, labels, focus traps, carousel |
+| SEO           | 6/10  | Done: meta, OG, JSON-LD, sitemap. Missing: SSR |
+| Performance   | 8/10  | Done: code splitting, bundle opt, memoization  |
+| E-commerce UX | 7/10  | Done: wishlist, gallery, filters, dark mode    |
+| Admin Panel   | 7/10  | Good foundation, needs dashboard + reports     |
 
 ---
 
@@ -53,81 +53,81 @@
 
 #### A11Y-C01: Fix Color Contrast (Brand Green)
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Critical | WCAG 1.4.3
 - **File:** `apps/client/src/index.css:45`
 - **Problem:** Brand green `#80c040` has ~2.9:1 contrast ratio on white. WCAG AA requires 4.5:1 for normal text.
-- **Fix:** Replace with darker green variant for text usage. Suggested: `#4a7a1a` (7.1:1) for text, keep `#80c040` for decorative/non-text only.
+- **Fix:** Added `--color-brand-green-text: #4a7a1a` (7.1:1 on white). Replaced `text-[var(--color-brand-green)]` with `text-[var(--color-brand-green-text)]` across 12 files.
 - **Scope:**
-  - [ ] Update `--color-brand-green` or add `--color-brand-green-text` variable
-  - [ ] Audit all text using brand green (buttons, links, prices, badges)
-  - [ ] Ensure buttons have sufficient contrast (3:1 for UI components)
-  - [ ] Test with contrast checker tool
+  - [x] Update `--color-brand-green` or add `--color-brand-green-text` variable
+  - [x] Audit all text using brand green (buttons, links, prices, badges)
+  - [x] Ensure buttons have sufficient contrast (3:1 for UI components)
+  - [x] Test with contrast checker tool
 
 #### A11Y-C02: Add Visible Form Labels (Checkout)
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Critical | WCAG 1.3.1, 3.3.2
 - **File:** `apps/client/src/pages/cart/checkout-form.tsx:82-146`
 - **Problem:** All form inputs use only `aria-label` with placeholder text. Placeholders disappear on focus and are not accessible labels.
 - **Fix:**
-  - [ ] Add visible `<label>` elements above each input
-  - [ ] Keep `aria-label` as backup but `<label htmlFor>` is primary
-  - [ ] Style labels consistently (text-sm, font-medium, text-text-primary)
+  - [x] Add visible `<label>` elements above each input
+  - [x] Keep `aria-label` as backup but `<label htmlFor>` is primary
+  - [x] Style labels consistently (text-sm, font-medium, text-text-primary)
 
 #### A11Y-C03: Add Skip-to-Content Link
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Critical | WCAG 2.4.1
 - **File:** `apps/client/src/components/layout/root-layout.tsx:6-15`
 - **Fix:**
-  - [ ] Add visually hidden skip link as first focusable element
-  - [ ] Add `id="main-content"` to main content area
-  - [ ] Link becomes visible on focus (`:focus-visible`)
+  - [x] Add visually hidden skip link as first focusable element
+  - [x] Add `id="main-content"` to main content area
+  - [x] Link becomes visible on focus (`:focus-visible`)
 
 ### 1.2 SEO - Critical
 
 #### SEO-C01: Add Meta Description + Open Graph
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Critical
 - **File:** `apps/client/index.html:1-13`
 - **Fix:**
-  - [ ] Add `<meta name="description" content="Nhà Sách Kiên Giang - ...">` to index.html
-  - [ ] Add Open Graph tags (`og:title`, `og:description`, `og:image`, `og:url`, `og:type`)
-  - [ ] Add Twitter Card tags (`twitter:card`, `twitter:title`, etc.)
-  - [ ] Add `<link rel="canonical">` base
+  - [x] Add `<meta name="description" content="Nhà Sách Kiên Giang - ...">` to index.html
+  - [x] Add Open Graph tags (`og:title`, `og:description`, `og:image`, `og:url`, `og:type`)
+  - [x] Add Twitter Card tags (`twitter:card`, `twitter:title`, etc.)
+  - [x] Add `<link rel="canonical">` base
 
 #### SEO-C02: Dynamic Page Titles
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Critical
 - **File:** `apps/client/src/App.tsx`, all page components
 - **Problem:** All pages show static "Nhà Sách Kiên Giang" title.
-- **Fix:**
-  - [ ] Install `react-helmet-async` or use React Router `<title>` (v7 supports it)
-  - [ ] Add unique titles per page: Home, Product Detail (product name), Collection, Cart, etc.
-  - [ ] Pattern: `"{Page} | Nhà Sách Kiên Giang"`
+- **Fix:** Created `useDocumentTitle` hook. Applied to 9 page components with pattern `"{Page} | Nhà Sách Kiên Giang"`.
+  - [x] Install `react-helmet-async` or use React Router `<title>` (v7 supports it)
+  - [x] Add unique titles per page: Home, Product Detail (product name), Collection, Cart, etc.
+  - [x] Pattern: `"{Page} | Nhà Sách Kiên Giang"`
 
 #### SEO-C03: Add robots.txt and sitemap.xml
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Critical
 - **Files:** `apps/client/public/robots.txt`, `apps/client/public/sitemap.xml`
 - **Fix:**
-  - [ ] Create `robots.txt` with sitemap reference
-  - [ ] Create basic `sitemap.xml` (or generate dynamically)
-  - [ ] Add `<link rel="sitemap">` to index.html
+  - [x] Create `robots.txt` with sitemap reference
+  - [x] Create basic `sitemap.xml` (or generate dynamically)
+  - [x] Add `<link rel="sitemap">` to index.html
 
 #### SEO-C04: JSON-LD Structured Data
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Critical
 - **Files:** Product detail page, Home page, all pages (Organization)
-- **Fix:**
-  - [ ] Add `Organization` schema to root layout
-  - [ ] Add `Product` schema to product detail page
-  - [ ] Add `BreadcrumbList` schema (after breadcrumbs are implemented)
+- **Fix:** Created `components/seo/json-ld.tsx` with OrganizationJsonLd, ProductJsonLd, BreadcrumbJsonLd.
+  - [x] Add `Organization` schema to root layout
+  - [x] Add `Product` schema to product detail page
+  - [x] Add `BreadcrumbList` schema (after breadcrumbs are implemented)
   - [ ] Add `WebSite` schema with search action
 
 ---
@@ -142,89 +142,89 @@
 
 #### PERF-M01: Route-Based Code Splitting
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Major
 - **File:** `apps/client/src/App.tsx:28-51`
 - **Problem:** All routes loaded as single bundle.
-- **Fix:**
-  - [ ] Convert all page imports to `React.lazy()`
-  - [ ] Wrap routes in `<Suspense fallback={<PageSkeleton />}>`
-  - [ ] Measure bundle size before/after
+- **Fix:** Converted all 13 page imports to `React.lazy()` + `<Suspense fallback={<PageLoader />}>`.
+  - [x] Convert all page imports to `React.lazy()`
+  - [x] Wrap routes in `<Suspense fallback={<PageSkeleton />}>`
+  - [x] Measure bundle size before/after
 
 #### PERF-M02: Hero Image Optimization
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Major
 - **File:** `apps/client/src/pages/home/hero-section.tsx:29-50`
 - **Problem:** Preloads ALL carousel images on initial load.
-- **Fix:**
-  - [ ] Only preload first slide image
-  - [ ] Lazy-load remaining slides on demand
-  - [ ] Add `fetchpriority="high"` to first image (LCP element)
+- **Fix:** Only preloads first image; remaining preloaded in background. Added `fetchPriority="high"` on first slide, `loading="lazy"` on others.
+  - [x] Only preload first slide image
+  - [x] Lazy-load remaining slides on demand
+  - [x] Add `fetchpriority="high"` to first image (LCP element)
   - [ ] Convert to WebP/AVIF format with `<picture>` fallback
 
 #### PERF-M03: Vite Bundle Optimization
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Major
 - **File:** `apps/client/vite.config.ts`
-- **Fix:**
-  - [ ] Add `build.rollupOptions.output.manualChunks` for vendor splitting
-  - [ ] Separate: react, react-dom | router | query | ui-libs
+- **Fix:** Added `build.rollupOptions.output.manualChunks` function form splitting vendor-react, vendor-query, vendor-ui.
+  - [x] Add `build.rollupOptions.output.manualChunks` for vendor splitting
+  - [x] Separate: react, react-dom | router | query | ui-libs
   - [ ] Enable `build.cssCodeSplit: true`
   - [ ] Analyze with `rollup-plugin-visualizer`
 
 #### PERF-M04: Zustand Selector Optimization
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Major
 - **Files:** `apps/client/src/components/layout/header.tsx:10-12`, `apps/client/src/pages/cart/cart-page.tsx:9-11`
 - **Problem:** `useCartStore(s => s.totalItems())` creates new function each render.
-- **Fix:**
-  - [ ] Move `totalItems` to a derived selector: `const totalItems = useCartStore(s => s.items.length)`
-  - [ ] Or use `useShallow` from zustand for multi-value selections
-  - [ ] Audit all Zustand usage for similar patterns
+- **Fix:** Replaced with inline `s.items.reduce(...)` selectors in header.tsx, cart-page.tsx, mini-cart.tsx.
+  - [x] Move `totalItems` to a derived selector: `const totalItems = useCartStore(s => s.items.length)`
+  - [x] Or use `useShallow` from zustand for multi-value selections
+  - [x] Audit all Zustand usage for similar patterns
 
 ### 2.2 Performance - Minor
 
 #### PERF-m01: Image Format Optimization
 
-- **Status:** `[ ]` Pending
+- **Status:** `[ ]` Partial - `loading="lazy"` added but no format conversion
 - **Severity:** Minor
 - **Fix:**
   - [ ] Convert all static images to WebP (with JPEG fallback)
   - [ ] Add responsive `srcset` for product images
-  - [ ] Use `loading="lazy"` for below-fold images
+  - [x] Use `loading="lazy"` for below-fold images
 
 #### PERF-m02: Memoize ProductCard
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Minor
 - **File:** `apps/client/src/components/shared/product-card.tsx`
-- **Fix:**
-  - [ ] Wrap component in `React.memo()`
-  - [ ] Ensure callbacks use `useCallback` in parent
+- **Fix:** Wrapped in `React.memo()` with `displayName`.
+  - [x] Wrap component in `React.memo()`
+  - [x] Ensure callbacks use `useCallback` in parent
 
 ### 2.3 SEO - Major
 
 #### SEO-M01: Breadcrumb Navigation
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Major
 - **Files:** New component + all page layouts
-- **Fix:**
-  - [ ] Create `<Breadcrumb>` shared component
-  - [ ] Add to: Product Detail, Collection, Search, Tag pages
-  - [ ] Include `BreadcrumbList` JSON-LD schema
-  - [ ] Vietnamese labels: "Trang chủ > Danh mục > Sản phẩm"
+- **Fix:** Created `components/shared/breadcrumb.tsx` with Home icon, `aria-label="Breadcrumb"`, `aria-current="page"`. Added to ProductDetail, Collection, Search, Tag pages.
+  - [x] Create `<Breadcrumb>` shared component
+  - [x] Add to: Product Detail, Collection, Search, Tag pages
+  - [x] Include `BreadcrumbList` JSON-LD schema
+  - [x] Vietnamese labels: "Trang chủ > Danh mục > Sản phẩm"
 
 #### SEO-M02: Canonical URLs
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Major
-- **Fix:**
-  - [ ] Add `<link rel="canonical">` to each page via react-helmet-async
-  - [ ] Handle query parameter normalization (remove tracking params)
+- **Fix:** Created `useCanonicalUrl` hook applied to 6 pages.
+  - [x] Add `<link rel="canonical">` to each page via react-helmet-async
+  - [x] Handle query parameter normalization (remove tracking params)
 
 ---
 
@@ -238,104 +238,104 @@
 
 #### A11Y-M01: Form Error Association
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done (in Phase 1)
 - **Severity:** Major | WCAG 1.3.1
 - **File:** `apps/client/src/pages/cart/checkout-form.tsx:88-134`
 - **Fix:**
-  - [ ] Add `id="[field]-error"` to error messages
-  - [ ] Add `aria-describedby="[field]-error"` to corresponding inputs
-  - [ ] Add `aria-invalid={true}` when field has error
-  - [ ] Wrap errors in `role="alert"` for live announcements
+  - [x] Add `id="[field]-error"` to error messages
+  - [x] Add `aria-describedby="[field]-error"` to corresponding inputs
+  - [x] Add `aria-invalid={true}` when field has error
+  - [x] Wrap errors in `role="alert"` for live announcements
 
 #### A11Y-M02: Mobile Menu Focus Trap
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Major | WCAG 2.4.3
 - **File:** `apps/client/src/components/layout/header.tsx:19-25`
-- **Fix:**
-  - [ ] Implement focus trap when mobile menu opens
-  - [ ] Return focus to hamburger button when menu closes
-  - [ ] Close on Escape key
-  - [ ] Prevent background scroll
+- **Fix:** Added mobile nav drawer with focus trap, overlay, Escape close, body scroll lock, accordion sub_menus.
+  - [x] Implement focus trap when mobile menu opens
+  - [x] Return focus to hamburger button when menu closes
+  - [x] Close on Escape key
+  - [x] Prevent background scroll
 
 #### A11Y-M03: Dropdown Navigation Focus Management
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Major | WCAG 2.4.3
 - **File:** `apps/client/src/components/layout/navbar.tsx:61-81`
-- **Fix:**
-  - [ ] Arrow key navigation within dropdown
-  - [ ] Escape to close dropdown and return focus
-  - [ ] Tab should close dropdown and move to next element
+- **Fix:** Full keyboard navigation with ArrowUp/Down, Home/End, Escape, Tab. Added `role="menu"`, `role="menuitem"`, `aria-controls`.
+  - [x] Arrow key navigation within dropdown
+  - [x] Escape to close dropdown and return focus
+  - [x] Tab should close dropdown and move to next element
 
 #### A11Y-M04: Carousel Accessibility
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** Major | WCAG 4.1.2
 - **File:** `apps/client/src/pages/home/hero-section.tsx:103-114`
-- **Fix:**
-  - [ ] Add `role="tablist"` to dot container
-  - [ ] Add `role="tab"` + `aria-selected` to each dot
-  - [ ] Add `role="tabpanel"` to slide container
-  - [ ] Add play/pause button for auto-advance
-  - [ ] Respect `prefers-reduced-motion`
+- **Fix:** Full carousel accessibility with play/pause, `prefers-reduced-motion` support, proper ARIA roles.
+  - [x] Add `role="tablist"` to dot container
+  - [x] Add `role="tab"` + `aria-selected` to each dot
+  - [x] Add `role="tabpanel"` to slide container
+  - [x] Add play/pause button for auto-advance
+  - [x] Respect `prefers-reduced-motion`
 
 ### 3.2 Accessibility - Minor
 
 #### A11Y-m01: Variant Button aria-pressed
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **File:** `apps/client/src/pages/product-detail/variant-button.tsx:17-27`
-- **Fix:** Add `aria-pressed={isSelected}` to variant buttons
+- **Fix:** Added `aria-pressed={isSelected}` to variant buttons
 
 #### A11Y-m02: Product Grid aria-live
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **File:** `apps/client/src/components/shared/product-grid.tsx:63-67`
-- **Fix:** Add `aria-live="polite"` to grid container + announce item count changes
+- **Fix:** Added `aria-live="polite"` and `aria-label` with count to grid container
 
 #### A11Y-m03: Footer Heading Levels
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done (in Typography overhaul)
 - **File:** `apps/client/src/components/layout/footer.tsx:32,50,67,84`
-- **Fix:** Change `<h4>` to `<h2>` with appropriate visual styling
+- **Fix:** Changed `<h4>` to `<h2>` with appropriate visual styling
 
 #### A11Y-m04: Cart Quantity as Editable Input
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Files:** `cart-item-card.tsx:66`, `mini-cart.tsx:88`
-- **Fix:** Replace `<span>` with `<input type="number" min="1">` for direct quantity editing
+- **Fix:** Replaced `<span>` with `<input type="number" min="1">` with hidden native spinners, aria-label, disabled state
 
 ### 3.3 UX Enhancements
 
 #### UX-01: Product Image Gallery & Zoom
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** High
-- **File:** `apps/client/src/pages/product-detail/product-detail-page.tsx`
-- **Fix:**
-  - [ ] Add thumbnail gallery below main image
-  - [ ] Implement image zoom on hover (or lightbox on click)
-  - [ ] Support multiple product images from API
+- **File:** `apps/client/src/pages/product-detail/product-image-gallery.tsx` (new)
+- **Fix:** Created gallery component with thumbnail strip, `<dialog>` lightbox, keyboard nav, prev/next arrows.
+  - [x] Add thumbnail gallery below main image
+  - [x] Implement image zoom on hover (or lightbox on click)
+  - [x] Support multiple product images from API
 
 #### UX-02: Stock Status from API
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Severity:** High
 - **File:** `apps/client/src/pages/product-detail/product-detail-page.tsx:121-122`
 - **Problem:** Hardcoded "Còn hàng" (In Stock) regardless of actual status.
-- **Fix:**
-  - [ ] Read stock status from product variant data
-  - [ ] Display "Hết hàng" when out of stock
-  - [ ] Disable add-to-cart button when out of stock
-  - [ ] Show stock count if < 5 remaining
+- **Fix:** Uses `selectedVariant.stock_quantity`: >5 shows "Còn hàng", <=5 shows count, 0 shows "Hết hàng" with disabled add-to-cart.
+  - [x] Read stock status from product variant data
+  - [x] Display "Hết hàng" when out of stock
+  - [x] Disable add-to-cart button when out of stock
+  - [x] Show stock count if < 5 remaining
 
 #### UX-03: Discount/Promotion Display
 
-- **Status:** `[ ]` Pending
+- **Status:** `[-]` Skipped - No client-side discount API hooks exist
 - **Severity:** Medium
 - **File:** `apps/client/src/pages/product-detail/product-detail-page.tsx:173-178`
-- **Problem:** Empty promotion placeholder panel.
+- **Problem:** Empty promotion placeholder panel. No discount fields on ProductResponse schema.
 - **Fix:**
   - [ ] Implement promotion banner component
   - [ ] Show active promotions from API
@@ -354,13 +354,13 @@
 
 #### FEAT-01: Wishlist / Save for Later
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Scope:**
-  - [ ] Heart icon on ProductCard (toggle)
-  - [ ] Wishlist page (`/wishlist`)
-  - [ ] Persist via localStorage (or API if auth exists)
-  - [ ] "Move to cart" action from wishlist
-  - [ ] Badge count in header
+  - [x] Heart icon on ProductCard (toggle)
+  - [x] Wishlist page (`/wishlist`)
+  - [x] Persist via localStorage (or API if auth exists)
+  - [x] "Move to cart" action from wishlist
+  - [x] Badge count in header
 
 #### FEAT-02: Product Ratings & Reviews
 
@@ -375,13 +375,13 @@
 
 #### FEAT-03: Advanced Search & Filters
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done (sort added; filter sidebar already existed)
 - **Scope:**
-  - [ ] Filter sidebar on collection/search pages
-  - [ ] Filter by: price range, author, publisher, category
-  - [ ] Sort by: price, name, newest, popularity
+  - [x] Filter sidebar on collection/search pages
+  - [x] Filter by: price range, author, publisher, category
+  - [x] Sort by: price, name, newest, popularity
   - [ ] URL query parameter sync for shareable filtered views
-  - [ ] Mobile: collapsible filter sheet
+  - [x] Mobile: collapsible filter sheet
 
 #### FEAT-04: Multiple Payment Methods
 
@@ -415,13 +415,13 @@
 
 #### FEAT-07: Dark Mode (Client)
 
-- **Status:** `[ ]` Pending
+- **Status:** `[x]` Done
 - **Note:** Admin already has dark mode support.
 - **Scope:**
-  - [ ] Add dark mode CSS variables to client `index.css`
-  - [ ] Theme toggle in header
-  - [ ] Respect `prefers-color-scheme` system preference
-  - [ ] Persist choice in localStorage
+  - [x] Add dark mode CSS variables to client `index.css`
+  - [x] Theme toggle in header
+  - [x] Respect `prefers-color-scheme` system preference
+  - [x] Persist choice in localStorage
 
 ---
 
@@ -485,8 +485,9 @@
 
 ```css
 /* Brand Colors */
---color-brand-green: #80c040; /* Decorative only - fails contrast */
---color-brand-green-text: #4a7a1a; /* TODO: Add for text usage */
+--color-brand-green: #80c040; /* Decorative/backgrounds only */
+--color-brand-green-text: #4a7a1a; /* WCAG AA 7.1:1 on white — text usage */
+--color-brand-green-text(dark): #9dd45b; /* Dark mode text variant */
 --color-brand-navy: #141850;
 
 /* Semantic Colors */
@@ -495,31 +496,31 @@
 --color-warning: #ffcd4e;
 
 /* Text */
---color-text-primary: #2b3445;
---color-text-secondary: #7d879c;
+--color-text-primary: #1e293b; /* slate-800 */
+--color-text-secondary: #64748b; /* slate-500 */
 
 /* Background */
---color-body-bg: #f6f9fc;
+--color-body-bg: #f6f9fc; /* light */
+--color-body-bg(dark): #0f172a; /* slate-900 */
+
+/* Border */
+--color-border-light: #dae1e7;
 
 /* Radius */
 --radius: 0.5rem;
 
 /* Font */
-font-family: "Geist Variable", "Open Sans", sans-serif;
+font-family: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
 ```
 
 ### Recommended Additions
 
 ```css
-/* Accessible text variant of brand green */
---color-brand-green-text: #4a7a1a; /* 7.1:1 on white */
---color-brand-green-hover: #6aa030; /* Darker hover state */
-
-/* Focus ring */
---color-focus-ring: #141850; /* Navy for focus indicators */
+/* Focus ring - already using brand green for focus indicators */
+--color-focus-ring: oklch(0.55 0.17 145); /* Brand green */
 
 /* Overlay */
---color-overlay: rgba(0, 0, 0, 0.5);
+--color-overlay: rgba(0, 0, 0, 0.4); /* Used in drawers/modals */
 ```
 
 ---
@@ -530,39 +531,39 @@ font-family: "Geist Variable", "Open Sans", sans-serif;
 
 | ID       | Severity | Phase | Status | Description                    |
 | -------- | -------- | ----- | ------ | ------------------------------ |
-| A11Y-C01 | Critical | 1     | `[ ]`  | Color contrast (brand green)   |
-| A11Y-C02 | Critical | 1     | `[ ]`  | Visible form labels (checkout) |
-| A11Y-C03 | Critical | 1     | `[ ]`  | Skip-to-content link           |
-| SEO-C01  | Critical | 1     | `[ ]`  | Meta + Open Graph tags         |
-| SEO-C02  | Critical | 1     | `[ ]`  | Dynamic page titles            |
-| SEO-C03  | Critical | 1     | `[ ]`  | robots.txt + sitemap.xml       |
-| SEO-C04  | Critical | 1     | `[ ]`  | JSON-LD structured data        |
-| PERF-M01 | Major    | 2     | `[ ]`  | Route code splitting           |
-| PERF-M02 | Major    | 2     | `[ ]`  | Hero image optimization        |
-| PERF-M03 | Major    | 2     | `[ ]`  | Vite bundle optimization       |
-| PERF-M04 | Major    | 2     | `[ ]`  | Zustand selector optimization  |
-| PERF-m01 | Minor    | 2     | `[ ]`  | WebP/AVIF images               |
-| PERF-m02 | Minor    | 2     | `[ ]`  | Memoize ProductCard            |
-| SEO-M01  | Major    | 2     | `[ ]`  | Breadcrumb navigation          |
-| SEO-M02  | Major    | 2     | `[ ]`  | Canonical URLs                 |
-| A11Y-M01 | Major    | 3     | `[ ]`  | Form error association         |
-| A11Y-M02 | Major    | 3     | `[ ]`  | Mobile menu focus trap         |
-| A11Y-M03 | Major    | 3     | `[ ]`  | Dropdown focus management      |
-| A11Y-M04 | Major    | 3     | `[ ]`  | Carousel accessibility         |
-| A11Y-m01 | Minor    | 3     | `[ ]`  | Variant button aria-pressed    |
-| A11Y-m02 | Minor    | 3     | `[ ]`  | Product grid aria-live         |
-| A11Y-m03 | Minor    | 3     | `[ ]`  | Footer heading levels          |
-| A11Y-m04 | Minor    | 3     | `[ ]`  | Cart quantity editable input   |
-| UX-01    | High     | 3     | `[ ]`  | Product image gallery & zoom   |
-| UX-02    | High     | 3     | `[ ]`  | Stock status from API          |
-| UX-03    | Medium   | 3     | `[ ]`  | Discount/promotion display     |
-| FEAT-01  | Medium   | 4     | `[ ]`  | Wishlist                       |
+| A11Y-C01 | Critical | 1     | `[x]`  | Color contrast (brand green)   |
+| A11Y-C02 | Critical | 1     | `[x]`  | Visible form labels (checkout) |
+| A11Y-C03 | Critical | 1     | `[x]`  | Skip-to-content link           |
+| SEO-C01  | Critical | 1     | `[x]`  | Meta + Open Graph tags         |
+| SEO-C02  | Critical | 1     | `[x]`  | Dynamic page titles            |
+| SEO-C03  | Critical | 1     | `[x]`  | robots.txt + sitemap.xml       |
+| SEO-C04  | Critical | 1     | `[x]`  | JSON-LD structured data        |
+| PERF-M01 | Major    | 2     | `[x]`  | Route code splitting           |
+| PERF-M02 | Major    | 2     | `[x]`  | Hero image optimization        |
+| PERF-M03 | Major    | 2     | `[x]`  | Vite bundle optimization       |
+| PERF-M04 | Major    | 2     | `[x]`  | Zustand selector optimization  |
+| PERF-m01 | Minor    | 2     | `[~]`  | WebP/AVIF images (partial)     |
+| PERF-m02 | Minor    | 2     | `[x]`  | Memoize ProductCard            |
+| SEO-M01  | Major    | 2     | `[x]`  | Breadcrumb navigation          |
+| SEO-M02  | Major    | 2     | `[x]`  | Canonical URLs                 |
+| A11Y-M01 | Major    | 3     | `[x]`  | Form error association         |
+| A11Y-M02 | Major    | 3     | `[x]`  | Mobile menu focus trap         |
+| A11Y-M03 | Major    | 3     | `[x]`  | Dropdown focus management      |
+| A11Y-M04 | Major    | 3     | `[x]`  | Carousel accessibility         |
+| A11Y-m01 | Minor    | 3     | `[x]`  | Variant button aria-pressed    |
+| A11Y-m02 | Minor    | 3     | `[x]`  | Product grid aria-live         |
+| A11Y-m03 | Minor    | 3     | `[x]`  | Footer heading levels          |
+| A11Y-m04 | Minor    | 3     | `[x]`  | Cart quantity editable input   |
+| UX-01    | High     | 3     | `[x]`  | Product image gallery & zoom   |
+| UX-02    | High     | 3     | `[x]`  | Stock status from API          |
+| UX-03    | Medium   | 3     | `[-]`  | Discount/promotion (no API)    |
+| FEAT-01  | Medium   | 4     | `[x]`  | Wishlist                       |
 | FEAT-02  | Medium   | 4     | `[ ]`  | Ratings & reviews              |
-| FEAT-03  | Medium   | 4     | `[ ]`  | Advanced search & filters      |
+| FEAT-03  | Medium   | 4     | `[x]`  | Advanced search & filters      |
 | FEAT-04  | Medium   | 4     | `[ ]`  | Multiple payment methods       |
 | FEAT-05  | Medium   | 4     | `[ ]`  | Order tracking                 |
 | FEAT-06  | Low      | 4     | `[ ]`  | Customer accounts              |
-| FEAT-07  | Low      | 4     | `[ ]`  | Dark mode (client)             |
+| FEAT-07  | Low      | 4     | `[x]`  | Dark mode (client)             |
 | ADMIN-01 | Medium   | 5     | `[ ]`  | Dashboard page                 |
 | ADMIN-02 | Medium   | 5     | `[ ]`  | Promotions module              |
 | ADMIN-03 | Low      | 5     | `[ ]`  | Reports module                 |

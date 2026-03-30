@@ -7,6 +7,7 @@ import { queryClient } from "@/lib/query-client";
 import CollectionListPage from "@/pages/collections/collection-list";
 import CreateCollectionPage from "@/pages/collections/create-collection";
 import EditCollectionPage from "@/pages/collections/edit-collection";
+import DashboardPage from "@/pages/dashboard/dashboard-page";
 import LoginPage from "@/pages/login";
 import MenuPage from "@/pages/menus/menu-page";
 import CreateOrderPage from "@/pages/orders/create-order";
@@ -33,7 +34,7 @@ const App = () => {
 					{/* Protected routes — redirect to login if not authenticated */}
 					<Route element={<RequireAuth />}>
 						<Route element={<RootLayout />}>
-							<Route index element={<div>Tổng Quan (Coming soon)</div>} />
+							<Route index element={<DashboardPage />} />
 							{/* Orders */}
 							<Route path="orders" element={<OrderListPage />} />
 							<Route path="orders/create" element={<CreateOrderPage />} />

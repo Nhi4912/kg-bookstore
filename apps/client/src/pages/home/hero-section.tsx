@@ -9,7 +9,7 @@ const SLIDES = [bannerImg1, bannerImg2] as const;
 
 /* ─── Skeleton shown while images load ─── */
 const BannerSkeleton = () => (
-	<div className="aspect-[1202/401] w-full animate-pulse rounded bg-gray-200" />
+	<div className="aspect-[1202/401] w-full animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
 );
 
 const HeroSection = () => {

@@ -10,9 +10,9 @@ const CATEGORY_COLORS = [
 ] as const;
 
 const CategorySkeleton = () => (
-	<div className="flex flex-col items-start justify-between rounded-lg bg-gray-100 p-4 sm:p-6">
-		<div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
-		<div className="mt-3 h-3 w-1/2 animate-pulse rounded bg-gray-200" />
+	<div className="flex flex-col items-start justify-between rounded-lg bg-gray-100 p-4 dark:bg-gray-800 sm:p-6">
+		<div className="h-4 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+		<div className="mt-3 h-3 w-1/2 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
 	</div>
 );
 
@@ -22,7 +22,7 @@ const FeaturedCategories = () => {
 	if (isLoading) {
 		return (
 			<section className="mx-auto mb-10 max-w-7xl px-4">
-				<div className="mb-4 h-6 w-40 animate-pulse rounded bg-gray-200" />
+				<div className="mb-4 h-6 w-40 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
 				<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
 					{Array.from({ length: 5 }).map((_, i) => (
 						<CategorySkeleton key={i} />
@@ -53,7 +53,7 @@ const FeaturedCategories = () => {
 						<h3 className="text-base font-semibold sm:text-lg">
 							{col.collection_name}
 						</h3>
-						<span className="mt-3 text-xs text-gray-600 sm:text-sm">
+						<span className="mt-3 text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
 							Xem ngay &rarr;
 						</span>
 					</Link>

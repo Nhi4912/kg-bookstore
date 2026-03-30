@@ -9,7 +9,7 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 	const removeItem = useCartStore((s) => s.removeItem);
 
 	return (
-		<div className="flex gap-4 rounded-lg border bg-white p-4 shadow-sm">
+		<div className="flex gap-4 rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
 			{item.imgUrl ? (
 				<Link to={`/product/${item.productId}`}>
 					<img
@@ -21,7 +21,7 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 					/>
 				</Link>
 			) : (
-				<div className="flex h-[100px] w-[100px] shrink-0 items-center justify-center rounded bg-gray-100 text-xs text-gray-400 sm:h-[140px] sm:w-[140px]">
+				<div className="flex h-[100px] w-[100px] shrink-0 items-center justify-center rounded bg-gray-100 text-xs text-gray-400 dark:bg-gray-700 dark:text-gray-500 sm:h-[140px] sm:w-[140px]">
 					Ảnh
 				</div>
 			)}
@@ -31,11 +31,13 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 					<div>
 						<Link
 							to={`/product/${item.productId}`}
-							className="line-clamp-1 font-semibold hover:text-[var(--color-brand-green-text)]"
+							className="line-clamp-1 font-semibold hover:text-[var(--color-brand-green-text)] dark:text-gray-200"
 						>
 							{item.productName}
 						</Link>
-						<p className="text-sm text-gray-500">{item.name}</p>
+						<p className="text-sm text-gray-500 dark:text-gray-400">
+							{item.name}
+						</p>
 					</div>
 					<button
 						onClick={() => removeItem(item.id)}
@@ -47,7 +49,7 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 				</div>
 
 				<div className="mt-2 flex items-center justify-between">
-					<div className="text-sm text-gray-600">
+					<div className="text-sm text-gray-600 dark:text-gray-400">
 						{formatCurrency(item.price)} x {item.qty} ={" "}
 						<span className="font-semibold text-[var(--color-brand-green-text)]">
 							{formatCurrency(item.price * item.qty)}
@@ -58,7 +60,7 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 						<button
 							onClick={() => updateQuantity(item.id, item.qty - 1)}
 							disabled={item.qty <= 1}
-							className="flex h-9 w-9 items-center justify-center rounded border disabled:opacity-40"
+							className="flex h-10 w-10 items-center justify-center rounded border disabled:opacity-40 dark:border-gray-600 dark:text-gray-300"
 							aria-label="Giảm số lượng"
 						>
 							<Minus size={14} />
@@ -73,12 +75,12 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 									updateQuantity(item.id, val);
 								}
 							}}
-							className="h-9 w-12 rounded border text-center text-sm font-semibold [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+							className="h-10 w-12 rounded border text-center text-sm font-semibold [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
 							aria-label={`Số lượng ${item.productName}`}
 						/>
 						<button
 							onClick={() => updateQuantity(item.id, item.qty + 1)}
-							className="flex h-9 w-9 items-center justify-center rounded border"
+							className="flex h-10 w-10 items-center justify-center rounded border dark:border-gray-600 dark:text-gray-300"
 							aria-label="Tăng số lượng"
 						>
 							<Plus size={14} />

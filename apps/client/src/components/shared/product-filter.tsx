@@ -18,7 +18,7 @@ const ProductFilter = ({
 	const vendors = vendorData?.items ?? [];
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 dark:text-gray-200">
 			{/* Vendor filter */}
 			{vendors.length > 0 ? (
 				<div>
@@ -33,7 +33,7 @@ const ProductFilter = ({
 									type="checkbox"
 									checked={selectedVendors.includes(vendor.id)}
 									onChange={() => onChangeVendors(vendor.id)}
-									className="rounded border-gray-300"
+									className="h-4 w-4 rounded border-gray-300 accent-[var(--color-brand-green)] focus:ring-2 focus:ring-[var(--color-brand-green)] dark:border-gray-600 dark:bg-gray-800"
 								/>
 								{vendor.name}
 							</label>
@@ -59,7 +59,7 @@ const ProductFilter = ({
 									selectedPrice.to === range.to
 								}
 								onChange={() => onChangePrice(range.from, range.to)}
-								className="border-gray-300"
+								className="h-4 w-4 border-gray-300 accent-[var(--color-brand-green)] focus:ring-2 focus:ring-[var(--color-brand-green)] dark:border-gray-600 dark:bg-gray-800"
 							/>
 							{range.label}
 						</label>

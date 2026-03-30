@@ -3,12 +3,12 @@ import { AlertTriangle } from "lucide-react";
 import ProductCard from "./product-card";
 
 const ProductSkeleton = () => (
-	<div className="overflow-hidden rounded-lg border bg-white">
-		<div className="aspect-square animate-pulse bg-gray-200" />
+	<div className="overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800">
+		<div className="aspect-square animate-pulse bg-gray-200 dark:bg-gray-700" />
 		<div className="space-y-2 p-3">
-			<div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
-			<div className="h-4 w-1/2 animate-pulse rounded bg-gray-200" />
-			<div className="h-8 animate-pulse rounded bg-gray-200" />
+			<div className="h-4 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+			<div className="h-4 w-1/2 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+			<div className="h-8 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
 		</div>
 	</div>
 );
@@ -36,7 +36,7 @@ const ProductGrid = ({
 
 	if (isError) {
 		return (
-			<div className="flex flex-col items-center justify-center py-16 text-gray-500">
+			<div className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-gray-400">
 				<AlertTriangle size={32} className="mb-3 text-amber-500" />
 				<p className="mb-1 font-medium">Không thể tải sản phẩm</p>
 				<p className="mb-4 text-sm">Vui lòng thử lại sau.</p>
@@ -55,7 +55,9 @@ const ProductGrid = ({
 
 	if (products.length === 0) {
 		return (
-			<p className="py-12 text-center text-gray-500">Hiện chưa có sản phẩm</p>
+			<p className="py-12 text-center text-gray-500 dark:text-gray-400">
+				Hiện chưa có sản phẩm
+			</p>
 		);
 	}
 

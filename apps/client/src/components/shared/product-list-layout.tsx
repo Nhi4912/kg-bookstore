@@ -93,7 +93,9 @@ const ProductListLayout = ({
 						<div>
 							{title ? <h1 className="text-xl font-bold">{title}</h1> : null}
 							{subtitle ? (
-								<p className="text-sm text-gray-500">{subtitle}</p>
+								<p className="text-sm text-gray-500 dark:text-gray-400">
+									{subtitle}
+								</p>
 							) : null}
 						</div>
 
@@ -106,7 +108,7 @@ const ProductListLayout = ({
 									onChange={(e) =>
 										handleChangeSort(e.target.value as SortOption)
 									}
-									className="rounded border bg-white px-2 py-1.5 text-sm text-gray-700 focus:border-[var(--color-brand-green)] focus:outline-none focus:ring-1 focus:ring-[var(--color-brand-green)]"
+									className="rounded border bg-white px-3 py-2 text-sm text-gray-700 focus:border-[var(--color-brand-green)] focus:outline-none focus:ring-1 focus:ring-[var(--color-brand-green)] dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
 									aria-label="Sắp xếp"
 								>
 									{SORT_OPTIONS.map((opt) => (
@@ -119,7 +121,7 @@ const ProductListLayout = ({
 
 							{/* Mobile filter toggle */}
 							<button
-								className="flex items-center gap-1.5 rounded border px-3 py-1.5 text-sm lg:hidden"
+								className="flex items-center gap-1.5 rounded border px-3 py-2 text-sm lg:hidden dark:border-gray-600 dark:text-gray-300"
 								onClick={() => setMobileFilterOpen(true)}
 							>
 								<FilterIcon size={16} />
@@ -161,7 +163,7 @@ const ProductListLayout = ({
 						role="dialog"
 						aria-modal="true"
 						aria-label="Bộ lọc"
-						className="fixed inset-y-0 left-0 z-50 w-[min(280px,85vw)] overflow-y-auto bg-white p-5 shadow-xl"
+						className="fixed inset-y-0 left-0 z-50 w-[min(280px,85vw)] overflow-y-auto bg-white p-5 shadow-xl dark:bg-gray-900"
 					>
 						<div className="mb-4 flex items-center justify-between">
 							<h3 className="text-lg font-semibold">Bộ lọc</h3>

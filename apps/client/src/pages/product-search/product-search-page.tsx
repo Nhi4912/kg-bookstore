@@ -7,11 +7,11 @@ import { useCanonicalUrl, useDocumentTitle } from "@/hooks/use-document-title";
 import { useProductQuery } from "@/hooks/use-product-query";
 
 const SearchHeader = ({ name, total }: { name: string; total: number }) => (
-	<div className="mb-6 rounded-lg border bg-white p-4 shadow-sm">
+	<div className="mb-6 rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
 		<h1 className="text-lg font-semibold">
 			Kết quả tìm kiếm cho &ldquo;{name}&rdquo;
 		</h1>
-		<p className="text-sm text-gray-500">
+		<p className="text-sm text-gray-500 dark:text-gray-400">
 			Có <strong>{total}</strong> sản phẩm cho tìm kiếm
 		</p>
 	</div>

@@ -24,7 +24,7 @@ const CartPage = () => {
 	if (items.length === 0) {
 		return (
 			<div className="flex min-h-[50vh] flex-col items-center justify-center px-4">
-				<p className="mb-4 text-gray-500">Giỏ hàng trống</p>
+				<p className="mb-4 text-gray-500 dark:text-gray-400">Giỏ hàng trống</p>
 				<Link
 					to="/"
 					className="rounded-md bg-[var(--color-brand-green)] px-6 py-2.5 text-sm font-medium text-white"

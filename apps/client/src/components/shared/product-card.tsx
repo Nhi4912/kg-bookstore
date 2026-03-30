@@ -57,7 +57,7 @@ const ProductCard = memo(({ product }: { product: ProductResponse }) => {
 						: `Thêm ${product.name} vào yêu thích`
 				}
 				aria-pressed={isWishlisted}
-				className="absolute right-2 top-2 z-10 rounded-full bg-white/80 p-1.5 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
+				className="absolute right-2 top-2 z-10 rounded-full bg-white/80 p-2 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-gray-800/80 dark:hover:bg-gray-800"
 			>
 				<Heart
 					size={16}
@@ -71,7 +71,7 @@ const ProductCard = memo(({ product }: { product: ProductResponse }) => {
 
 			<Link
 				to={`/product/${product.id}`}
-				className="block aspect-square overflow-hidden bg-gray-100"
+				className="block aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700"
 			>
 				{imageUrl ? (
 					<img
@@ -81,12 +81,12 @@ const ProductCard = memo(({ product }: { product: ProductResponse }) => {
 						className="h-full w-full object-cover transition-transform group-hover:scale-105"
 					/>
 				) : (
-					<div className="flex h-full items-center justify-center text-gray-300">
+					<div className="flex h-full items-center justify-center text-gray-300 dark:text-gray-500">
 						Không có ảnh
 					</div>
 				)}
 			</Link>
-			<div className="p-3">
+			<div className="p-3 dark:text-gray-200">
 				<Link
 					to={`/product/${product.id}`}
 					className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-[var(--color-brand-green-text)] dark:text-gray-200"
@@ -100,7 +100,7 @@ const ProductCard = memo(({ product }: { product: ProductResponse }) => {
 					onClick={handleAddToCart}
 					disabled={!firstVariant}
 					aria-label={`Thêm ${product.name} vào giỏ hàng`}
-					className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md bg-[var(--color-brand-green)] px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--color-brand-green)]/90 disabled:opacity-50"
+					className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md bg-[var(--color-brand-green)] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-brand-green)]/90 disabled:opacity-50"
 				>
 					<ShoppingCart size={14} />
 					Thêm vào giỏ

@@ -118,7 +118,7 @@ const ProductDetailPage = () => {
 					<h1 className="mb-3 text-2xl font-bold">{product.name}</h1>
 
 					{product.vendor ? (
-						<div className="mb-2 text-sm text-gray-600">
+						<div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
 							<span>Nhà cung cấp: </span>
 							<span className="font-medium">{product.vendor.name}</span>
 						</div>
@@ -148,7 +148,7 @@ const ProductDetailPage = () => {
 						<button
 							onClick={() => setQty((q) => Math.max(1, q - 1))}
 							disabled={qty <= 1}
-							className="rounded border p-2.5 disabled:opacity-40"
+							className="rounded border p-2.5 disabled:opacity-40 dark:border-gray-600 dark:text-gray-300"
 							aria-label="Giảm số lượng"
 						>
 							<Minus size={16} />
@@ -158,7 +158,7 @@ const ProductDetailPage = () => {
 						</span>
 						<button
 							onClick={() => setQty((q) => q + 1)}
-							className="rounded border p-2.5"
+							className="rounded border p-2.5 dark:border-gray-600 dark:text-gray-300"
 							aria-label="Tăng số lượng"
 						>
 							<Plus size={16} />
@@ -193,9 +193,11 @@ const ProductDetailPage = () => {
 
 				{/* Discount Panel Placeholder */}
 				<div className="hidden md:col-span-3 md:block">
-					<div className="rounded-lg border bg-gray-50 p-4">
+					<div className="rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
 						<h3 className="mb-2 text-sm font-semibold">Khuyến mãi</h3>
-						<p className="text-xs text-gray-500">Chưa có khuyến mãi nào</p>
+						<p className="text-xs text-gray-500 dark:text-gray-400">
+							Chưa có khuyến mãi nào
+						</p>
 					</div>
 				</div>
 			</div>
@@ -203,7 +205,7 @@ const ProductDetailPage = () => {
 			{/* Description */}
 			{product.description ? (
 				<div className="mt-12">
-					<div className="border-b">
+					<div className="border-b dark:border-gray-700">
 						<span className="inline-block border-b-2 border-[var(--color-brand-green)] pb-3 text-sm font-semibold">
 							Mô tả sản phẩm
 						</span>

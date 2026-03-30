@@ -125,7 +125,7 @@ const SearchBox = () => {
 					aria-controls="search-listbox"
 					aria-activedescendant={activeDescendant}
 					autoComplete="off"
-					className="w-full rounded-full border bg-gray-50 py-2 pl-10 pr-4 text-sm outline-none transition-colors focus:border-[var(--color-brand-green)] focus:bg-white"
+					className="w-full rounded-full border bg-gray-50 py-2 pl-10 pr-4 text-sm outline-none transition-colors focus:border-[var(--color-brand-green)] focus:bg-white dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:focus:bg-gray-800"
 				/>
 				{isFetching ? (
 					<Loader2
@@ -140,7 +140,7 @@ const SearchBox = () => {
 				<div
 					id="search-listbox"
 					role="listbox"
-					className="absolute top-full left-0 z-50 mt-1 w-full overflow-hidden rounded-lg border bg-white shadow-lg"
+					className="absolute top-full left-0 z-50 mt-1 w-full overflow-hidden rounded-lg border bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
 				>
 					{results.map((product, idx) => {
 						const imageUrl = product.images?.[0]?.url;
@@ -154,8 +154,8 @@ const SearchBox = () => {
 								onClick={handleResultClick}
 								role="option"
 								aria-selected={activeIndex === idx}
-								className={`flex gap-3 px-3 py-2.5 transition-colors hover:bg-gray-50 ${
-									activeIndex === idx ? "bg-gray-50" : ""
+								className={`flex gap-3 px-3 py-2.5 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700 ${
+									activeIndex === idx ? "bg-gray-50 dark:bg-gray-700" : ""
 								}`}
 							>
 								{imageUrl ? (
@@ -167,12 +167,12 @@ const SearchBox = () => {
 										className="h-[56px] w-[56px] shrink-0 rounded object-contain"
 									/>
 								) : (
-									<div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-400">
+									<div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-400 dark:bg-gray-700 dark:text-gray-500">
 										Ảnh
 									</div>
 								)}
 								<div className="flex min-w-0 flex-1 flex-col justify-center">
-									<p className="line-clamp-2 text-sm font-medium text-gray-800">
+									<p className="line-clamp-2 text-sm font-medium text-gray-800 dark:text-gray-200">
 										{product.name}
 									</p>
 									<p className="mt-0.5 text-sm font-semibold text-[var(--color-brand-green-text)]">
@@ -191,8 +191,10 @@ const SearchBox = () => {
 							role="option"
 							aria-selected={activeIndex === results.length}
 							onClick={handleViewMore}
-							className={`w-full border-t px-3 py-2.5 text-center text-sm font-medium text-[var(--color-brand-green-text)] transition-colors hover:bg-gray-50 ${
-								activeIndex === results.length ? "bg-gray-50" : ""
+							className={`w-full border-t px-3 py-2.5 text-center text-sm font-medium text-[var(--color-brand-green-text)] transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 ${
+								activeIndex === results.length
+									? "bg-gray-50 dark:bg-gray-700"
+									: ""
 							}`}
 						>
 							Xem thêm {total - 4} sản phẩm

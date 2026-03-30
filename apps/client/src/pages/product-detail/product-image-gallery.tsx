@@ -72,7 +72,7 @@ const ProductImageGallery = ({
 
 	if (images.length === 0) {
 		return (
-			<div className="flex aspect-square items-center justify-center rounded-lg bg-gray-100 text-gray-400">
+			<div className="flex aspect-square items-center justify-center rounded-lg bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
 				Không có ảnh
 			</div>
 		);
@@ -85,7 +85,7 @@ const ProductImageGallery = ({
 				<button
 					type="button"
 					onClick={openZoom}
-					className="relative flex w-full cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border bg-white"
+					className="relative flex w-full cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border bg-white dark:border-gray-700 dark:bg-gray-800"
 					aria-label={`Phóng to ảnh ${currentImage?.alt || productName}`}
 				>
 					<img

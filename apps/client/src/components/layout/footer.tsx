@@ -70,7 +70,7 @@ const Footer = () => (
 							<li key={link.href}>
 								<Link
 									to={link.href}
-									className="text-gray-600 hover:text-[var(--color-brand-green-text)] transition-colors"
+									className="text-gray-600 hover:text-[var(--color-brand-green-text)] transition-colors dark:text-gray-400"
 								>
 									{link.label}
 								</Link>
@@ -87,7 +87,7 @@ const Footer = () => (
 							<li key={link.href}>
 								<Link
 									to={link.href}
-									className="text-gray-600 hover:text-[var(--color-brand-green-text)] transition-colors"
+									className="text-gray-600 hover:text-[var(--color-brand-green-text)] transition-colors dark:text-gray-400"
 								>
 									{link.label}
 								</Link>

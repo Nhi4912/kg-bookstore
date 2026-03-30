@@ -15,7 +15,7 @@ const Breadcrumb = ({ items }: { items: BreadcrumbItem[] }) => {
 
 	return (
 		<nav aria-label="Breadcrumb" className="mb-6">
-			<ol className="flex flex-wrap items-center gap-1 text-sm text-gray-500">
+			<ol className="flex flex-wrap items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
 				{/* Home crumb */}
 				<li className="flex items-center">
 					<Link
@@ -33,11 +33,14 @@ const Breadcrumb = ({ items }: { items: BreadcrumbItem[] }) => {
 						<li key={idx} className="flex items-center">
 							<ChevronRight
 								size={14}
-								className="mx-1 text-gray-300"
+								className="mx-1 text-gray-300 dark:text-gray-600"
 								aria-hidden="true"
 							/>
 							{isLast || !item.href ? (
-								<span className="font-medium text-gray-800" aria-current="page">
+								<span
+									className="font-medium text-gray-800 dark:text-gray-200"
+									aria-current="page"
+								>
 									{item.label}
 								</span>
 							) : (

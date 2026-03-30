@@ -66,10 +66,10 @@ const CheckoutForm = ({ items, totalPrice, onSuccess }: CheckoutFormProps) => {
 	};
 
 	return (
-		<div className="rounded-lg border bg-white p-6 shadow-sm">
+		<div className="rounded-lg border bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
 			{/* Total */}
 			<div className="mb-4 flex items-center justify-between">
-				<span className="text-gray-600">Tổng cộng:</span>
+				<span className="text-gray-600 dark:text-gray-400">Tổng cộng:</span>
 				<span className="text-lg font-bold">{formatCurrency(totalPrice)}</span>
 			</div>
 
@@ -94,7 +94,7 @@ const CheckoutForm = ({ items, totalPrice, onSuccess }: CheckoutFormProps) => {
 								errors.last_name ? "last-name-error" : undefined
 							}
 							aria-invalid={errors.last_name ? true : undefined}
-							className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
+							className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)] dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
 						/>
 						{errors.last_name ? (
 							<p
@@ -122,7 +122,7 @@ const CheckoutForm = ({ items, totalPrice, onSuccess }: CheckoutFormProps) => {
 								errors.first_name ? "first-name-error" : undefined
 							}
 							aria-invalid={errors.first_name ? true : undefined}
-							className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
+							className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)] dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
 						/>
 						{errors.first_name ? (
 							<p
@@ -150,7 +150,7 @@ const CheckoutForm = ({ items, totalPrice, onSuccess }: CheckoutFormProps) => {
 						aria-label="Số điện thoại"
 						aria-describedby={errors.phone_number ? "phone-error" : undefined}
 						aria-invalid={errors.phone_number ? true : undefined}
-						className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
+						className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)] dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
 					/>
 					{errors.phone_number ? (
 						<p
@@ -177,7 +177,7 @@ const CheckoutForm = ({ items, totalPrice, onSuccess }: CheckoutFormProps) => {
 						aria-label="Địa chỉ"
 						aria-describedby={errors.address ? "address-error" : undefined}
 						aria-invalid={errors.address ? true : undefined}
-						className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
+						className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)] dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
 					/>
 					{errors.address ? (
 						<p

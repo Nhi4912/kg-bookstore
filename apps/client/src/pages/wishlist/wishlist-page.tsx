@@ -50,8 +50,8 @@ const WishlistPage = () => {
 			</div>
 
 			{items.length === 0 ? (
-				<div className="flex flex-col items-center justify-center py-20 text-gray-500">
-					<Heart size={48} className="mb-4 text-gray-300" />
+				<div className="flex flex-col items-center justify-center py-20 text-gray-500 dark:text-gray-400">
+					<Heart size={48} className="mb-4 text-gray-300 dark:text-gray-600" />
 					<p className="mb-2 text-lg font-medium">Chưa có sản phẩm yêu thích</p>
 					<p className="mb-6 text-sm">
 						Hãy thêm sản phẩm vào danh sách yêu thích để xem lại sau.
@@ -68,11 +68,11 @@ const WishlistPage = () => {
 					{items.map((item) => (
 						<div
 							key={item.productId}
-							className="group overflow-hidden rounded-lg border bg-white transition-shadow hover:shadow-md"
+							className="group overflow-hidden rounded-lg border bg-white transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
 						>
 							<Link
 								to={`/product/${item.productId}`}
-								className="block aspect-square overflow-hidden bg-gray-100"
+								className="block aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700"
 							>
 								{item.imgUrl ? (
 									<img
@@ -82,7 +82,7 @@ const WishlistPage = () => {
 										className="h-full w-full object-cover transition-transform group-hover:scale-105"
 									/>
 								) : (
-									<div className="flex h-full items-center justify-center text-gray-300">
+									<div className="flex h-full items-center justify-center text-gray-300 dark:text-gray-500">
 										Không có ảnh
 									</div>
 								)}
@@ -90,7 +90,7 @@ const WishlistPage = () => {
 							<div className="p-3">
 								<Link
 									to={`/product/${item.productId}`}
-									className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-[var(--color-brand-green-text)]"
+									className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-[var(--color-brand-green-text)] dark:text-gray-200"
 								>
 									{item.name}
 								</Link>
@@ -100,7 +100,7 @@ const WishlistPage = () => {
 								<div className="mt-2 flex gap-2">
 									<button
 										onClick={() => handleMoveToCart(item)}
-										className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--color-brand-green)] px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--color-brand-green)]/90"
+										className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--color-brand-green)] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-brand-green)]/90"
 									>
 										<ShoppingCart size={14} />
 										Thêm vào giỏ
@@ -111,7 +111,7 @@ const WishlistPage = () => {
 											toast.success(`Đã xóa "${item.name}" khỏi yêu thích`);
 										}}
 										aria-label={`Xóa ${item.name} khỏi yêu thích`}
-										className="rounded-md border px-2.5 py-2 text-gray-400 transition-colors hover:border-red-200 hover:text-red-500"
+										className="rounded-md border px-2.5 py-2 text-gray-400 transition-colors hover:border-red-200 hover:text-red-500 dark:border-gray-600 dark:text-gray-500"
 									>
 										<Trash2 size={14} />
 									</button>

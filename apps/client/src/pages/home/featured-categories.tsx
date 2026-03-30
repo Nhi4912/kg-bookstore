@@ -50,7 +50,7 @@ const FeaturedCategories = () => {
 							backgroundColor: CATEGORY_COLORS[idx % CATEGORY_COLORS.length],
 						}}
 					>
-						<h3 className="text-sm font-bold sm:text-base">
+						<h3 className="text-base font-semibold sm:text-lg">
 							{col.collection_name}
 						</h3>
 						<span className="mt-3 text-xs text-gray-600 sm:text-sm">

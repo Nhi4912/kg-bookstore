@@ -15,7 +15,9 @@ const MiniCart = ({
 	const items = useCartStore((s) => s.items);
 	const updateQuantity = useCartStore((s) => s.updateQuantity);
 	const removeItem = useCartStore((s) => s.removeItem);
-	const totalPrice = useCartStore((s) => s.totalPrice());
+	const totalPrice = useCartStore((s) =>
+		s.items.reduce((sum, item) => sum + item.price * item.qty, 0),
+	);
 	const drawerRef = useFocusTrap(open);
 
 	// Close on Escape key
@@ -80,12 +82,25 @@ const MiniCart = ({
 										<div className="mt-1 flex items-center gap-2">
 											<button
 												onClick={() => updateQuantity(item.id, item.qty - 1)}
-												className="flex h-8 w-8 items-center justify-center rounded border"
+												disabled={item.qty <= 1}
+												className="flex h-8 w-8 items-center justify-center rounded border disabled:opacity-40"
 												aria-label="Giảm số lượng"
 											>
 												<Minus size={14} />
 											</button>
-											<span className="text-sm">{item.qty}</span>
+											<input
+												type="number"
+												min={1}
+												value={item.qty}
+												onChange={(e) => {
+													const val = Number.parseInt(e.target.value, 10);
+													if (!Number.isNaN(val) && val >= 1) {
+														updateQuantity(item.id, val);
+													}
+												}}
+												className="h-8 w-10 rounded border text-center text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+												aria-label={`Số lượng ${item.productName}`}
+											/>
 											<button
 												onClick={() => updateQuantity(item.id, item.qty + 1)}
 												className="flex h-8 w-8 items-center justify-center rounded border"

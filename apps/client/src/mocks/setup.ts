@@ -1,4 +1,3 @@
-import type { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { MOCK_COLLECTIONS } from "./data/collections";
 import { MOCK_MENU } from "./data/menus";
 import { MOCK_PRODUCTS } from "./data/products";
@@ -11,22 +10,11 @@ import { MOCK_VENDORS } from "./data/vendors";
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-const ok = <T>(data: T): AxiosResponse<T> =>
-	({
-		data,
-		status: 200,
-		statusText: "OK",
-		headers: {},
-		config: {} as InternalAxiosRequestConfig,
-	}) as AxiosResponse<T>;
+const param = (url: URL, key: string): string | undefined =>
+	url.searchParams.get(key) ?? undefined;
 
-const param = (config: InternalAxiosRequestConfig, key: string) => {
-	const p = config.params?.[key];
-	return p === undefined ? undefined : String(p);
-};
-
-const numParam = (config: InternalAxiosRequestConfig, key: string) => {
-	const v = param(config, key);
+const numParam = (url: URL, key: string): number | undefined => {
+	const v = param(url, key);
 	return v === undefined ? undefined : Number(v);
 };
 
@@ -44,14 +32,14 @@ const parseJsonParam = (raw: string | undefined): string[] => {
 	}
 };
 
-const filterProducts = (config: InternalAxiosRequestConfig) => {
-	const collectionIds = parseJsonParam(param(config, "collection_ids"));
-	const productIds = parseJsonParam(param(config, "product_ids"));
-	const vendorIds = parseJsonParam(param(config, "vendor_ids"));
-	const name = param(config, "name")?.toLowerCase();
-	const fromPrice = numParam(config, "from_price");
-	const toPrice = numParam(config, "to_price");
-	const isVisible = numParam(config, "is_visible");
+const filterProducts = (url: URL) => {
+	const collectionIds = parseJsonParam(param(url, "collection_ids"));
+	const productIds = parseJsonParam(param(url, "product_ids"));
+	const vendorIds = parseJsonParam(param(url, "vendor_ids"));
+	const name = param(url, "name")?.toLowerCase();
+	const fromPrice = numParam(url, "from_price");
+	const toPrice = numParam(url, "to_price");
+	const isVisible = numParam(url, "is_visible");
 
 	const items = MOCK_PRODUCTS.filter((p) => {
 		if (
@@ -70,8 +58,8 @@ const filterProducts = (config: InternalAxiosRequestConfig) => {
 	});
 
 	const total = items.length;
-	const limit = numParam(config, "limit") ?? 21;
-	const offset = numParam(config, "offset") ?? 0;
+	const limit = numParam(url, "limit") ?? 21;
+	const offset = numParam(url, "offset") ?? 0;
 
 	return {
 		items: items.slice(offset, offset + limit),
@@ -83,9 +71,7 @@ const filterProducts = (config: InternalAxiosRequestConfig) => {
 /*  Route matcher                                                      */
 /* ------------------------------------------------------------------ */
 
-type Handler = (
-	config: InternalAxiosRequestConfig,
-) => Promise<AxiosResponse> | AxiosResponse;
+type Handler = (url: URL) => Promise<unknown> | unknown;
 
 interface MockRoute {
 	method: string;
@@ -98,41 +84,39 @@ const routes: MockRoute[] = [
 	{
 		method: "get",
 		pattern: /\/menus$/,
-		handler: () => ok(MOCK_MENU),
+		handler: () => MOCK_MENU,
 	},
 
 	// GET /tags/special (must be before /tags)
 	{
 		method: "get",
 		pattern: /\/tags\/special$/,
-		handler: () => ok(MOCK_SPECIAL_TAG),
+		handler: () => MOCK_SPECIAL_TAG,
 	},
 
 	// GET /tags
 	{
 		method: "get",
 		pattern: /\/tags$/,
-		handler: () => ok({ items: MOCK_TAGS }),
+		handler: () => ({ items: MOCK_TAGS }),
 	},
 
 	// GET /vendors
 	{
 		method: "get",
 		pattern: /\/vendors$/,
-		handler: () => ok({ items: MOCK_VENDORS }),
+		handler: () => ({ items: MOCK_VENDORS }),
 	},
 
 	// GET /products/:id
 	{
 		method: "get",
 		pattern: /\/products\/([^/]+)$/,
-		handler: (config) => {
-			const url = config.url ?? "";
-			const match = url.match(/\/products\/([^/]+)$/);
+		handler: (url) => {
+			const match = url.pathname.match(/\/products\/([^/]+)$/);
 			const id = match?.[1];
 			const found = MOCK_PRODUCTS.find((p) => p.id === id);
-			if (found) return ok(found);
-			return ok(null);
+			return found ?? null;
 		},
 	},
 
@@ -140,30 +124,30 @@ const routes: MockRoute[] = [
 	{
 		method: "get",
 		pattern: /\/products$/,
-		handler: (config) => ok(filterProducts(config)),
+		handler: (url) => filterProducts(url),
 	},
 
 	// GET /collections/:id
 	{
 		method: "get",
 		pattern: /\/collections\/([^/]+)$/,
-		handler: (config) => {
-			const url = config.url ?? "";
-			const match = url.match(/\/collections\/([^/]+)$/);
+		handler: (url) => {
+			const match = url.pathname.match(/\/collections\/([^/]+)$/);
 			const id = match?.[1];
 			const found = MOCK_COLLECTIONS.find((c) => c.id === id);
-			if (found) return ok(found);
-			return ok({
-				id,
-				title: id,
-				description: "",
-				image_id: null,
-				image: null,
-				is_visible: true,
-				tag: "",
-				created_at: "",
-				updated_at: "",
-			});
+			return (
+				found ?? {
+					id,
+					title: id,
+					description: "",
+					image_id: null,
+					image: null,
+					is_visible: true,
+					tag: "",
+					created_at: "",
+					updated_at: "",
+				}
+			);
 		},
 	},
 
@@ -173,50 +157,48 @@ const routes: MockRoute[] = [
 		pattern: /\/orders$/,
 		handler: async () => {
 			await delay(500);
-			return ok({ id: `order-${Date.now()}`, status: "pending" });
+			return { id: `order-${Date.now()}`, status: "pending" };
 		},
 	},
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Setup — replaces axios adapter with mock handler                   */
+/*  Setup — overrides globalThis.fetch with mock handler               */
 /* ------------------------------------------------------------------ */
 
-export const setupMocks = async () => {
-	const { apiClient } = await import("@/lib/axios");
+export const setupMocks = () => {
+	const originalFetch = globalThis.fetch;
 
-	apiClient.interceptors.request.use(async (config) => {
-		const method = (config.method ?? "get").toLowerCase();
-		const url = config.url ?? "";
+	globalThis.fetch = async (
+		input: RequestInfo | URL,
+		init?: RequestInit,
+	): Promise<Response> => {
+		const urlStr =
+			typeof input === "string"
+				? input
+				: input instanceof URL
+					? input.toString()
+					: input.url;
+		const url = new URL(urlStr);
+		const method = (init?.method ?? "GET").toLowerCase();
 
 		const route = routes.find(
-			(r) => r.method === method && r.pattern.test(url),
+			(r) => r.method === method && r.pattern.test(url.pathname),
 		);
 
 		if (route) {
 			// Simulate network latency
 			await delay(150 + Math.random() * 200);
 
-			const response = await route.handler(config);
-
-			// Throw with adapter bypass — interceptor.response picks it up
-			const error = new Error("mock");
-			Object.assign(error, { __MOCK_RESPONSE__: response });
-			throw error;
+			const data = await route.handler(url);
+			return new Response(JSON.stringify(data), {
+				status: 200,
+				headers: { "Content-Type": "application/json" },
+			});
 		}
 
-		return config;
-	});
-
-	apiClient.interceptors.response.use(
-		(response) => response,
-		(error: Error & { __MOCK_RESPONSE__?: AxiosResponse }) => {
-			if (error.__MOCK_RESPONSE__) {
-				return Promise.resolve(error.__MOCK_RESPONSE__);
-			}
-			return Promise.reject(error);
-		},
-	);
+		return originalFetch(input, init);
+	};
 
 	console.log(
 		"%c[Mock] API mocks enabled — 36 products, 8 collections, 4 tags, 8 vendors",

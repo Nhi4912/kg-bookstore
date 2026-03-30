@@ -4,15 +4,14 @@ import type {
 	VendorResponse,
 } from "@kgbookstore/api-contract";
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 // ─── Categories ───
 
 const useCategories = () => {
 	return useQuery({
 		queryKey: ["categories"],
-		queryFn: () =>
-			apiClient.get<CategoryListResponse>("/categories").then((r) => r.data),
+		queryFn: () => api.get<CategoryListResponse>("/categories"),
 	});
 };
 
@@ -25,8 +24,7 @@ interface VendorListResponse {
 const useVendors = () => {
 	return useQuery({
 		queryKey: ["vendors"],
-		queryFn: () =>
-			apiClient.get<VendorListResponse>("/vendors").then((r) => r.data),
+		queryFn: () => api.get<VendorListResponse>("/vendors"),
 	});
 };
 
@@ -35,8 +33,7 @@ const useVendors = () => {
 const useAttributes = () => {
 	return useQuery({
 		queryKey: ["attributes"],
-		queryFn: () =>
-			apiClient.get<AttributeListResponse>("/attributes").then((r) => r.data),
+		queryFn: () => api.get<AttributeListResponse>("/attributes"),
 	});
 };
 

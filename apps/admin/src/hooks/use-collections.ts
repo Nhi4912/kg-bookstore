@@ -7,7 +7,7 @@ import type {
 	UpdateCollectionRequest,
 } from "@kgbookstore/api-contract";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 // ─── Query Key Factory ───
 
@@ -25,20 +25,14 @@ const collectionKeys = {
 const useCollections = (params?: Partial<CollectionQueryParams>) => {
 	return useQuery({
 		queryKey: collectionKeys.list(params),
-		queryFn: () =>
-			apiClient
-				.get<CollectionListResponse>("/collections", { params })
-				.then((r) => r.data),
+		queryFn: () => api.get<CollectionListResponse>("/collections", params),
 	});
 };
 
 const useCollectionDetail = (id: string) => {
 	return useQuery({
 		queryKey: collectionKeys.detail(id),
-		queryFn: () =>
-			apiClient
-				.get<CollectionResponse>(`/collections/${id}`)
-				.then((r) => r.data),
+		queryFn: () => api.get<CollectionResponse>(`/collections/${id}`),
 		enabled: !!id,
 	});
 };
@@ -49,9 +43,7 @@ const useCreateCollection = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (data: CreateCollectionRequest) =>
-			apiClient
-				.post<CreatedResponse>("/collections/with-admin", data)
-				.then((r) => r.data),
+			api.post<CreatedResponse>("/collections/with-admin", data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.all });
 		},
@@ -62,7 +54,7 @@ const useUpdateCollection = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: ({ id, data }: { id: string; data: UpdateCollectionRequest }) =>
-			apiClient.put(`/collections/with-admin/${id}`, data),
+			api.put(`/collections/with-admin/${id}`, data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.all });
 		},
@@ -72,8 +64,7 @@ const useUpdateCollection = () => {
 const useDeleteCollection = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (id: string) =>
-			apiClient.delete(`/collections/with-admin/${id}`),
+		mutationFn: (id: string) => api.delete(`/collections/with-admin/${id}`),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.all });
 		},

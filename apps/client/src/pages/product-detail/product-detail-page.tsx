@@ -25,6 +25,7 @@ const ProductDetailPage = () => {
 	const [qty, setQty] = useState(1);
 
 	// Set initial variant & track recently viewed
+	/* eslint-disable react-hooks/set-state-in-effect -- sync API data to local editable variant selection */
 	useEffect(() => {
 		if (product) {
 			setSelectedVariant(product.variants?.[0]);
@@ -32,6 +33,7 @@ const ProductDetailPage = () => {
 			addProductId(product.id);
 		}
 	}, [product, addProductId]);
+	/* eslint-enable react-hooks/set-state-in-effect */
 
 	const recentIds = id ? getFilteredIds(id) : [];
 

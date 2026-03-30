@@ -1,10 +1,10 @@
 import type { MenuResponse } from "@kgbookstore/api-contract";
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 export const useMenus = () =>
 	useQuery({
 		queryKey: ["menus"],
-		queryFn: () => apiClient.get<MenuResponse>("/menus").then((r) => r.data),
+		queryFn: () => api.get<MenuResponse>("/menus"),
 		staleTime: Infinity,
 	});

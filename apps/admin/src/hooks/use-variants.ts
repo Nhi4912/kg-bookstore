@@ -4,7 +4,7 @@ import type {
 	UpdateVariantRequest,
 } from "@kgbookstore/api-contract";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 import { productKeys } from "./use-products";
 
 const useCreateProductVariant = (productId: string) => {
@@ -12,12 +12,10 @@ const useCreateProductVariant = (productId: string) => {
 
 	return useMutation({
 		mutationFn: (data: CreateVariantRequest) =>
-			apiClient
-				.post<CreatedResponse>(
-					`/products/${productId}/variants/with-admin`,
-					data,
-				)
-				.then((r) => r.data),
+			api.post<CreatedResponse>(
+				`/products/${productId}/variants/with-admin`,
+				data,
+			),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: productKeys.detail(productId),
@@ -37,9 +35,7 @@ const useUpdateProductVariant = (productId: string) => {
 			variantId: string;
 			data: UpdateVariantRequest;
 		}) =>
-			apiClient
-				.put(`/products/${productId}/variants/${variantId}/with-admin`, data)
-				.then((r) => r.data),
+			api.put(`/products/${productId}/variants/${variantId}/with-admin`, data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: productKeys.detail(productId),
@@ -53,9 +49,7 @@ const useDeleteProductVariant = (productId: string) => {
 
 	return useMutation({
 		mutationFn: (variantId: string) =>
-			apiClient
-				.delete(`/products/${productId}/variants/${variantId}/with-admin`)
-				.then((r) => r.data),
+			api.delete(`/products/${productId}/variants/${variantId}/with-admin`),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: productKeys.detail(productId),

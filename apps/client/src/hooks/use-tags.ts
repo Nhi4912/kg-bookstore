@@ -1,11 +1,11 @@
 import type { TagListResponse } from "@kgbookstore/api-contract";
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 export const useTags = () => {
 	const query = useQuery({
 		queryKey: ["tags"],
-		queryFn: () => apiClient.get<TagListResponse>("/tags").then((r) => r.data),
+		queryFn: () => api.get<TagListResponse>("/tags"),
 		staleTime: Infinity,
 	});
 

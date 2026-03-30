@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 export interface CheckoutFormValues {
 	first_name: string;
@@ -18,8 +18,7 @@ export const useCreateOrder = (opts?: {
 }) =>
 	useMutation({
 		mutationKey: ["create-order"],
-		mutationFn: (data: CheckoutFormValues) =>
-			apiClient.post("/orders", data).then((r) => r.data),
+		mutationFn: (data: CheckoutFormValues) => api.post("/orders", data),
 		onSuccess: () => opts?.onSuccess?.(),
 		onError: () => opts?.onError?.(),
 	});

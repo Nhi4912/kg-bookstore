@@ -15,7 +15,7 @@ import {
 	REFRESH_TOKEN_DAYS,
 	ROUTES,
 } from "@/constants";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 import { deleteCookie, getCookie, setCookie } from "@/lib/cookie";
 
 // ─── Query keys ───
@@ -98,8 +98,7 @@ export const useAuth = () => {
 export const useSignIn = () => {
 	return useMutation({
 		mutationFn: async (data: SignInRequest) => {
-			const res = await apiClient.post<SignInResponse>("/admins/sign-in", data);
-			return res.data;
+			return api.post<SignInResponse>("/admins/sign-in", data);
 		},
 	});
 };
@@ -107,11 +106,7 @@ export const useSignIn = () => {
 export const useSignUp = () => {
 	return useMutation({
 		mutationFn: async (data: SignUpRequest) => {
-			const res = await apiClient.post<CreatedResponse>(
-				"/admins/sign-up",
-				data,
-			);
-			return res.data;
+			return api.post<CreatedResponse>("/admins/sign-up", data);
 		},
 	});
 };

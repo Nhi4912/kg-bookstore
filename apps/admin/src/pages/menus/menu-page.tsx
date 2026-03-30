@@ -37,13 +37,15 @@ const MenuPage = () => {
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [isDirty, setIsDirty] = useState(false);
 
-	// Sync API data → local tree state
+	// Sync API data → local tree state (antd Tree requires mutable local state for drag-drop)
+	/* eslint-disable react-hooks/set-state-in-effect -- sync external data to local editable tree state */
 	useEffect(() => {
 		if (menuData?.menu_items) {
 			setTreeData(menuResponseToTree(menuData.menu_items));
 			setIsDirty(false);
 		}
 	}, [menuData]);
+	/* eslint-enable react-hooks/set-state-in-effect */
 
 	const handleAddCollection = (collection: CollectionResponse) => {
 		setTreeData((prev) => addNodeToTree(prev, collection.id, collection.title));

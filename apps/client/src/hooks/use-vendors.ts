@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 interface VendorResponse {
 	id: string;
@@ -13,7 +13,6 @@ interface VendorListResponse {
 export const useVendors = () =>
 	useQuery({
 		queryKey: ["vendors"],
-		queryFn: () =>
-			apiClient.get<VendorListResponse>("/vendors").then((r) => r.data),
+		queryFn: () => api.get<VendorListResponse>("/vendors"),
 		staleTime: Infinity,
 	});

@@ -6,7 +6,7 @@ import type {
 	UpdateOrderRequest,
 } from "@kgbookstore/api-contract";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 const orderKeys = {
 	all: ["orders"] as const,
@@ -20,20 +20,14 @@ const orderKeys = {
 const useOrders = (params?: Partial<OrderQueryParams>) => {
 	return useQuery({
 		queryKey: orderKeys.list(params),
-		queryFn: () =>
-			apiClient
-				.get<OrderListResponse>("/orders/with-admin", { params })
-				.then((r) => r.data),
+		queryFn: () => api.get<OrderListResponse>("/orders/with-admin", params),
 	});
 };
 
 const useOrderDetail = (id: string) => {
 	return useQuery({
 		queryKey: orderKeys.detail(id),
-		queryFn: () =>
-			apiClient
-				.get<OrderResponse>(`/orders/with-admin/${id}`)
-				.then((r) => r.data),
+		queryFn: () => api.get<OrderResponse>(`/orders/with-admin/${id}`),
 		enabled: !!id,
 	});
 };
@@ -42,7 +36,7 @@ const useCreateOrder = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (data: CreateOrderRequest) =>
-			apiClient.post("/orders/with-admin", data).then((r) => r.data),
+			api.post("/orders/with-admin", data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: orderKeys.lists() });
 		},
@@ -53,9 +47,7 @@ const useUpdateOrder = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (data: UpdateOrderRequest) =>
-			apiClient
-				.put(`/orders/with-admin/${data.order_id}`, data)
-				.then((r) => r.data),
+			api.put(`/orders/with-admin/${data.order_id}`, data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: orderKeys.all });
 		},

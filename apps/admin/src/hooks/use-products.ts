@@ -7,7 +7,7 @@ import type {
 	UpdateProductRequest,
 } from "@kgbookstore/api-contract";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 const productKeys = {
 	all: ["products"] as const,
@@ -19,18 +19,14 @@ const productKeys = {
 const useProducts = (params?: Partial<ProductQueryParams>) => {
 	return useQuery({
 		queryKey: productKeys.list(params),
-		queryFn: () =>
-			apiClient
-				.get<ProductListResponse>("/products", { params })
-				.then((r) => r.data),
+		queryFn: () => api.get<ProductListResponse>("/products", params),
 	});
 };
 
 const useProductDetail = (id: string) => {
 	return useQuery({
 		queryKey: productKeys.detail(id),
-		queryFn: () =>
-			apiClient.get<ProductResponse>(`/products/${id}`).then((r) => r.data),
+		queryFn: () => api.get<ProductResponse>(`/products/${id}`),
 		enabled: !!id,
 	});
 };
@@ -40,9 +36,7 @@ const useCreateProduct = () => {
 
 	return useMutation({
 		mutationFn: (data: CreateProductRequest) =>
-			apiClient
-				.post<CreatedResponse>("/products/with-admin", data)
-				.then((r) => r.data),
+			api.post<CreatedResponse>("/products/with-admin", data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: productKeys.all });
 		},
@@ -54,7 +48,7 @@ const useUpdateProduct = () => {
 
 	return useMutation({
 		mutationFn: ({ id, data }: { id: string; data: UpdateProductRequest }) =>
-			apiClient.put(`/products/with-admin/${id}`, data).then((r) => r.data),
+			api.put(`/products/with-admin/${id}`, data),
 		onSuccess: (_data, variables) => {
 			queryClient.invalidateQueries({ queryKey: productKeys.all });
 			queryClient.invalidateQueries({
@@ -68,8 +62,7 @@ const useDeleteProduct = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (id: string) =>
-			apiClient.delete(`/products/with-admin/${id}`).then((r) => r.data),
+		mutationFn: (id: string) => api.delete(`/products/with-admin/${id}`),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: productKeys.all });
 		},

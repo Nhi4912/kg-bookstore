@@ -3,7 +3,7 @@ import type {
 	ProductResponse,
 } from "@kgbookstore/api-contract";
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 export const productKeys = {
 	all: ["products"] as const,
@@ -25,18 +25,14 @@ export const useProducts = (params?: {
 			limit,
 		}),
 		queryFn: () =>
-			apiClient
-				.get<ProductListResponse>("/products", {
-					params: {
-						limit,
-						offset: 0,
-						collection_ids: params?.collectionIds
-							? JSON.stringify(params.collectionIds)
-							: undefined,
-						is_visible: 1,
-					},
-				})
-				.then((r) => r.data),
+			api.get<ProductListResponse>("/products", {
+				limit,
+				offset: 0,
+				collection_ids: params?.collectionIds
+					? JSON.stringify(params.collectionIds)
+					: undefined,
+				is_visible: 1,
+			}),
 		staleTime: Infinity,
 	});
 };
@@ -45,11 +41,12 @@ export const useSearchProducts = (name: string) =>
 	useQuery({
 		queryKey: productKeys.search(name),
 		queryFn: () =>
-			apiClient
-				.get<ProductListResponse>("/products", {
-					params: { limit: 4, offset: 0, name, is_visible: 1 },
-				})
-				.then((r) => r.data),
+			api.get<ProductListResponse>("/products", {
+				limit: 4,
+				offset: 0,
+				name,
+				is_visible: 1,
+			}),
 		enabled: name.length >= 2,
 		staleTime: 30_000,
 	});
@@ -57,7 +54,6 @@ export const useSearchProducts = (name: string) =>
 export const useProductDetail = (id: string) =>
 	useQuery({
 		queryKey: productKeys.detail(id),
-		queryFn: () =>
-			apiClient.get<ProductResponse>(`/products/${id}`).then((r) => r.data),
+		queryFn: () => api.get<ProductResponse>(`/products/${id}`),
 		enabled: !!id,
 	});

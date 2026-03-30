@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/axios";
+import { api } from "@/lib/api";
 
 export interface SpecialTagCollection {
 	collection_id: string;
@@ -15,7 +15,6 @@ export interface SpecialTagResponse {
 export const useSpecialTag = () =>
 	useQuery({
 		queryKey: ["tags", "special"],
-		queryFn: () =>
-			apiClient.get<SpecialTagResponse>("/tags/special").then((r) => r.data),
+		queryFn: () => api.get<SpecialTagResponse>("/tags/special"),
 		staleTime: Infinity,
 	});

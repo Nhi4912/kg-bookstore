@@ -37,11 +37,6 @@ const SearchBox = () => {
 		return () => document.removeEventListener("mousedown", handleClick);
 	}, []);
 
-	// Reset active index when results change
-	useEffect(() => {
-		setActiveIndex(-1);
-	}, [results.length]);
-
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		const trimmed = query.trim();
@@ -118,6 +113,7 @@ const SearchBox = () => {
 					onChange={(e) => {
 						setQuery(e.target.value);
 						setOpen(true);
+						setActiveIndex(-1);
 					}}
 					onFocus={() => setOpen(true)}
 					onKeyDown={handleKeyDown}

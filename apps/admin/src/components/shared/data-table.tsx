@@ -26,6 +26,7 @@ const DataTable = <TData, TValue>({
 	isLoading = false,
 	emptyMessage = "Không có dữ liệu",
 }: DataTableProps<TData, TValue>) => {
+	// eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table returns mutable objects by design
 	const table = useReactTable({
 		data,
 		columns,

@@ -5,11 +5,41 @@ import { DEFAULT_PAGE_SIZE } from "@/constants";
 import { api } from "@/lib/api";
 import { productKeys } from "./use-products";
 
+export type SortOption =
+	| "newest"
+	| "oldest"
+	| "price_asc"
+	| "price_desc"
+	| "name_asc"
+	| "name_desc";
+
 interface FilterQuery {
 	vendor_ids: string[];
 	from_price: number | null;
 	to_price: number | null;
+	sort: SortOption;
 }
+
+const getSortParams = (
+	sort: SortOption,
+): Record<string, string | undefined> => {
+	switch (sort) {
+		case "newest":
+			return { sort_by: "created_at", sort_dir: "desc" };
+		case "oldest":
+			return { sort_by: "created_at", sort_dir: "asc" };
+		case "price_asc":
+			return { price_sort_dir: "asc" };
+		case "price_desc":
+			return { price_sort_dir: "desc" };
+		case "name_asc":
+			return { sort_by: "name", sort_dir: "asc" };
+		case "name_desc":
+			return { sort_by: "name", sort_dir: "desc" };
+		default:
+			return {};
+	}
+};
 
 const buildParams = (
 	defaultQuery: Record<string, unknown>,
@@ -21,6 +51,7 @@ const buildParams = (
 		offset,
 		is_visible: 1,
 		...defaultQuery,
+		...getSortParams(filterQuery.sort),
 	};
 
 	if (filterQuery.vendor_ids.length > 0) {
@@ -44,6 +75,7 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 		vendor_ids: [],
 		from_price: null,
 		to_price: null,
+		sort: "newest",
 	});
 
 	const queryKey = useMemo(
@@ -53,6 +85,7 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 				_vendor_ids: filterQuery.vendor_ids,
 				_from_price: filterQuery.from_price,
 				_to_price: filterQuery.to_price,
+				_sort: filterQuery.sort,
 			}),
 		[defaultQuery, filterQuery],
 	);
@@ -90,7 +123,8 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 	const isShowClearFilter =
 		filterQuery.vendor_ids.length > 0 ||
 		filterQuery.from_price !== null ||
-		filterQuery.to_price !== null;
+		filterQuery.to_price !== null ||
+		filterQuery.sort !== "newest";
 
 	const loadMore = useCallback(() => {
 		fetchNextPage();
@@ -111,7 +145,16 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 	}, []);
 
 	const clearFilter = useCallback(() => {
-		setFilterQuery({ vendor_ids: [], from_price: null, to_price: null });
+		setFilterQuery({
+			vendor_ids: [],
+			from_price: null,
+			to_price: null,
+			sort: "newest",
+		});
+	}, []);
+
+	const handleChangeSort = useCallback((sort: SortOption) => {
+		setFilterQuery((prev) => ({ ...prev, sort }));
 	}, []);
 
 	const retry = useCallback(() => {
@@ -130,6 +173,7 @@ export const useProductQuery = (defaultQuery: Record<string, unknown>) => {
 		loadMore,
 		handleChangePrice,
 		handleChangeVendors,
+		handleChangeSort,
 		clearFilter,
 		retry,
 	};

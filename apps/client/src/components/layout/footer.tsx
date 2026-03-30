@@ -24,7 +24,7 @@ const PRODUCT_LINKS = [
 ];
 
 const Footer = () => (
-	<footer className="bg-white border-t mt-12">
+	<footer className="bg-white border-t mt-12 dark:bg-gray-900 dark:border-gray-700">
 		<div className="mx-auto max-w-7xl px-4 py-10">
 			<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
 				{/* Company */}

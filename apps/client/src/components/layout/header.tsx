@@ -1,11 +1,13 @@
-import { ChevronDown, Menu, ShoppingCart, X } from "lucide-react";
+import { ChevronDown, Heart, Menu, ShoppingCart, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import MiniCart from "@/components/shared/mini-cart";
 import SearchBox from "@/components/shared/search-box";
+import ThemeToggle from "@/components/shared/theme-toggle";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useMenus } from "@/hooks/use-menus";
 import { useCartStore } from "@/stores/cart-store";
+import { useWishlistStore } from "@/stores/wishlist-store";
 
 const Header = () => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -17,6 +19,7 @@ const Header = () => {
 	);
 	const isCartOpen = useCartStore((s) => s.isOpen);
 	const setCartOpen = useCartStore((s) => s.setCartOpen);
+	const wishlistCount = useWishlistStore((s) => s.items.length);
 
 	const menuItems = useMemo(() => menu?.menu_items ?? [], [menu?.menu_items]);
 
@@ -47,7 +50,7 @@ const Header = () => {
 	const closeMobileMenu = () => setMobileMenuOpen(false);
 
 	return (
-		<header className="sticky top-0 z-50 bg-white shadow-sm">
+		<header className="sticky top-0 z-50 bg-white shadow-sm dark:bg-gray-900 dark:shadow-gray-800/20">
 			<div className="mx-auto max-w-7xl px-4">
 				<div className="flex h-16 items-center justify-between">
 					{/* Mobile hamburger */}
@@ -73,19 +76,38 @@ const Header = () => {
 						<SearchBox />
 					</div>
 
-					{/* Cart */}
-					<button
-						className="relative rounded-full bg-gray-100 p-2.5"
-						onClick={() => setCartOpen(true)}
-						aria-label="Giỏ hàng"
-					>
-						<ShoppingCart size={20} />
-						{totalItems > 0 && (
-							<span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-brand-green)] text-[10px] font-bold text-white">
-								{totalItems}
-							</span>
-						)}
-					</button>
+					<div className="flex items-center gap-2">
+						{/* Theme toggle */}
+						<ThemeToggle />
+
+						{/* Wishlist */}
+						<Link
+							to="/wishlist"
+							className="relative rounded-full bg-gray-100 p-2.5 dark:bg-gray-800"
+							aria-label="Danh sách yêu thích"
+						>
+							<Heart size={20} />
+							{wishlistCount > 0 && (
+								<span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+									{wishlistCount}
+								</span>
+							)}
+						</Link>
+
+						{/* Cart */}
+						<button
+							className="relative rounded-full bg-gray-100 p-2.5 dark:bg-gray-800"
+							onClick={() => setCartOpen(true)}
+							aria-label="Giỏ hàng"
+						>
+							<ShoppingCart size={20} />
+							{totalItems > 0 && (
+								<span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-brand-green)] text-[10px] font-bold text-white">
+									{totalItems}
+								</span>
+							)}
+						</button>
+					</div>
 				</div>
 
 				{/* Mobile search */}

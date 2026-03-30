@@ -130,7 +130,7 @@ const NavItem = ({ item }: { item: MenuItemResponse }) => {
 				<ul
 					id={menuId}
 					role="menu"
-					className={`absolute left-0 top-full z-50 min-w-48 rounded-md border bg-white py-1 shadow-lg transition-all ${
+					className={`absolute left-0 top-full z-50 min-w-48 rounded-md border bg-white py-1 shadow-lg transition-all dark:border-gray-700 dark:bg-gray-800 ${
 						isOpen
 							? "visible opacity-100"
 							: "invisible opacity-0 pointer-events-none"
@@ -165,7 +165,10 @@ const Navbar = () => {
 	if (items.length === 0) return null;
 
 	return (
-		<nav className="hidden border-b bg-white md:block" aria-label="Danh mục">
+		<nav
+			className="hidden border-b bg-white md:block dark:bg-gray-900 dark:border-gray-700"
+			aria-label="Danh mục"
+		>
 			<div className="mx-auto max-w-7xl px-4">
 				<ul className="flex items-center gap-1">
 					<li>

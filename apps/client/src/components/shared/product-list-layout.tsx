@@ -1,11 +1,20 @@
-import { FilterIcon, Loader2, X } from "lucide-react";
+import { ArrowDownUp, FilterIcon, Loader2, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
-import type { useProductQuery } from "@/hooks/use-product-query";
+import type { SortOption, useProductQuery } from "@/hooks/use-product-query";
 import ProductFilter from "./product-filter";
 
 type ProductQueryReturn = ReturnType<typeof useProductQuery>;
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+	{ value: "newest", label: "Mới nhất" },
+	{ value: "oldest", label: "Cũ nhất" },
+	{ value: "price_asc", label: "Giá tăng dần" },
+	{ value: "price_desc", label: "Giá giảm dần" },
+	{ value: "name_asc", label: "Tên A-Z" },
+	{ value: "name_desc", label: "Tên Z-A" },
+];
 
 interface ProductListLayoutProps {
 	title: string;
@@ -30,6 +39,7 @@ const ProductListLayout = ({
 		loadMore,
 		handleChangePrice,
 		handleChangeVendors,
+		handleChangeSort,
 		clearFilter,
 	} = productQuery;
 
@@ -79,22 +89,43 @@ const ProductListLayout = ({
 				{/* Content */}
 				<div className="lg:col-span-9">
 					{/* Header */}
-					<div className="mb-4 flex items-center justify-between">
+					<div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 						<div>
-							<h1 className="text-xl font-bold">{title}</h1>
+							{title ? <h1 className="text-xl font-bold">{title}</h1> : null}
 							{subtitle ? (
 								<p className="text-sm text-gray-500">{subtitle}</p>
 							) : null}
 						</div>
 
-						{/* Mobile filter toggle */}
-						<button
-							className="flex items-center gap-1.5 rounded border px-3 py-2 text-sm lg:hidden"
-							onClick={() => setMobileFilterOpen(true)}
-						>
-							<FilterIcon size={16} />
-							Bộ lọc
-						</button>
+						<div className="flex items-center gap-2">
+							{/* Sort dropdown */}
+							<div className="flex items-center gap-1.5">
+								<ArrowDownUp size={14} className="text-gray-500" />
+								<select
+									value={filterQuery.sort}
+									onChange={(e) =>
+										handleChangeSort(e.target.value as SortOption)
+									}
+									className="rounded border bg-white px-2 py-1.5 text-sm text-gray-700 focus:border-[var(--color-brand-green)] focus:outline-none focus:ring-1 focus:ring-[var(--color-brand-green)]"
+									aria-label="Sắp xếp"
+								>
+									{SORT_OPTIONS.map((opt) => (
+										<option key={opt.value} value={opt.value}>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
+
+							{/* Mobile filter toggle */}
+							<button
+								className="flex items-center gap-1.5 rounded border px-3 py-1.5 text-sm lg:hidden"
+								onClick={() => setMobileFilterOpen(true)}
+							>
+								<FilterIcon size={16} />
+								Bộ lọc
+							</button>
+						</div>
 					</div>
 
 					{/* Product grid slot */}

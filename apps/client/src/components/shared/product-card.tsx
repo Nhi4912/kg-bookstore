@@ -1,13 +1,18 @@
 import type { ProductResponse } from "@kgbookstore/api-contract";
-import { ShoppingCart } from "lucide-react";
-import { memo } from "react";
+import { Heart, ShoppingCart } from "lucide-react";
+import { memo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/format";
 import { useCartStore } from "@/stores/cart-store";
+import { useWishlistStore } from "@/stores/wishlist-store";
 
 const ProductCard = memo(({ product }: { product: ProductResponse }) => {
 	const addItem = useCartStore((s) => s.addItem);
+	const toggleWishlist = useWishlistStore((s) => s.toggleItem);
+	const isWishlisted = useWishlistStore((s) =>
+		s.items.some((i) => i.productId === product.id),
+	);
 	const firstVariant = product.variants?.[0];
 	const imageUrl = product.images?.[0]?.url;
 	const price = firstVariant?.retail_price ?? 0;
@@ -26,8 +31,44 @@ const ProductCard = memo(({ product }: { product: ProductResponse }) => {
 		toast.success(`Đã thêm "${product.name}" vào giỏ hàng`);
 	};
 
+	const handleToggleWishlist = useCallback(() => {
+		toggleWishlist({
+			productId: product.id,
+			name: product.name,
+			imgUrl: imageUrl ?? undefined,
+			price,
+			addedAt: Date.now(),
+		});
+		toast.success(
+			isWishlisted
+				? `Đã xóa "${product.name}" khỏi yêu thích`
+				: `Đã thêm "${product.name}" vào yêu thích`,
+		);
+	}, [toggleWishlist, product.id, product.name, imageUrl, price, isWishlisted]);
+
 	return (
-		<div className="group overflow-hidden rounded-lg border bg-white transition-shadow hover:shadow-md">
+		<div className="group relative overflow-hidden rounded-lg border bg-white transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+			{/* Wishlist heart button */}
+			<button
+				onClick={handleToggleWishlist}
+				aria-label={
+					isWishlisted
+						? `Xóa ${product.name} khỏi yêu thích`
+						: `Thêm ${product.name} vào yêu thích`
+				}
+				aria-pressed={isWishlisted}
+				className="absolute right-2 top-2 z-10 rounded-full bg-white/80 p-1.5 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
+			>
+				<Heart
+					size={16}
+					className={
+						isWishlisted
+							? "fill-red-500 text-red-500"
+							: "text-gray-400 hover:text-red-400"
+					}
+				/>
+			</button>
+
 			<Link
 				to={`/product/${product.id}`}
 				className="block aspect-square overflow-hidden bg-gray-100"
@@ -48,7 +89,7 @@ const ProductCard = memo(({ product }: { product: ProductResponse }) => {
 			<div className="p-3">
 				<Link
 					to={`/product/${product.id}`}
-					className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-[var(--color-brand-green-text)]"
+					className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-[var(--color-brand-green-text)] dark:text-gray-200"
 				>
 					{product.name}
 				</Link>

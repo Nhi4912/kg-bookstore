@@ -22,6 +22,7 @@ const ProductsByTagPage = lazy(
 	() => import("@/pages/products-by-tag/products-by-tag-page"),
 );
 const CartPage = lazy(() => import("@/pages/cart/cart-page"));
+const WishlistPage = lazy(() => import("@/pages/wishlist/wishlist-page"));
 const NotFoundPage = lazy(() => import("@/pages/not-found/not-found-page"));
 
 /* Static pages */
@@ -90,6 +91,14 @@ const App = () => (
 						element={
 							<Suspense fallback={<PageLoader />}>
 								<CartPage />
+							</Suspense>
+						}
+					/>
+					<Route
+						path={ROUTES.WISHLIST}
+						element={
+							<Suspense fallback={<PageLoader />}>
+								<WishlistPage />
 							</Suspense>
 						}
 					/>

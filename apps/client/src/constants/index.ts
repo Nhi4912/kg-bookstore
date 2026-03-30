@@ -2,6 +2,7 @@ export const API_BASE_URL =
 	import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api/vac_shop";
 
 export const CART_STORAGE_KEY = "kgbookstore_cart";
+export const WISHLIST_STORAGE_KEY = "kgbookstore_wishlist";
 export const RECENT_PRODUCTS_KEY = "kgbookstore_recent_products";
 export const MAX_RECENT_PRODUCTS = 9;
 export const DEFAULT_PAGE_SIZE = 21;
@@ -13,6 +14,7 @@ export const ROUTES = {
 	COLLECTION: "/collection/:id",
 	PRODUCTS_BY_TAG: "/products/tag/:id",
 	CART: "/cart",
+	WISHLIST: "/wishlist",
 	TERMS: "/pages/dieu-khoan-dich-vu",
 	PRIVACY: "/pages/chinh-sach-bao-mat",
 	RETURN_POLICY: "/pages/chinh-sach-doi-tra",

@@ -60,7 +60,7 @@ const ProductListLayout = ({
 			{isShowClearFilter ? (
 				<button
 					onClick={clearFilter}
-					className="mt-3 w-full rounded border border-[var(--color-brand-green)] py-2 text-sm text-[var(--color-brand-green)] transition-colors hover:bg-[var(--color-brand-green)] hover:text-white"
+					className="mt-3 w-full rounded border border-[var(--color-brand-green)] py-2 text-sm text-[var(--color-brand-green-text)] transition-colors hover:bg-[var(--color-brand-green)] hover:text-white"
 				>
 					Xoá bộ lọc
 				</button>
@@ -106,7 +106,7 @@ const ProductListLayout = ({
 							<button
 								onClick={loadMore}
 								disabled={isLoadingMore}
-								className="inline-flex items-center gap-2 rounded border border-[var(--color-brand-green)] px-6 py-2.5 text-sm text-[var(--color-brand-green)] transition-colors hover:bg-[var(--color-brand-green)] hover:text-white disabled:opacity-50"
+								className="inline-flex items-center gap-2 rounded border border-[var(--color-brand-green)] px-6 py-2.5 text-sm text-[var(--color-brand-green-text)] transition-colors hover:bg-[var(--color-brand-green)] hover:text-white disabled:opacity-50"
 							>
 								{isLoadingMore ? (
 									<Loader2 size={16} className="animate-spin" />

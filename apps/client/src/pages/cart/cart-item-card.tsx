@@ -31,7 +31,7 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 					<div>
 						<Link
 							to={`/product/${item.productId}`}
-							className="line-clamp-1 font-semibold hover:text-[var(--color-brand-green)]"
+							className="line-clamp-1 font-semibold hover:text-[var(--color-brand-green-text)]"
 						>
 							{item.productName}
 						</Link>
@@ -49,7 +49,7 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 				<div className="mt-2 flex items-center justify-between">
 					<div className="text-sm text-gray-600">
 						{formatCurrency(item.price)} x {item.qty} ={" "}
-						<span className="font-semibold text-[var(--color-brand-green)]">
+						<span className="font-semibold text-[var(--color-brand-green-text)]">
 							{formatCurrency(item.price * item.qty)}
 						</span>
 					</div>
@@ -63,9 +63,19 @@ const CartItemCard = ({ item }: { item: CartItem }) => {
 						>
 							<Minus size={14} />
 						</button>
-						<span className="min-w-[2ch] text-center text-sm font-semibold">
-							{item.qty}
-						</span>
+						<input
+							type="number"
+							min={1}
+							value={item.qty}
+							onChange={(e) => {
+								const val = Number.parseInt(e.target.value, 10);
+								if (!Number.isNaN(val) && val >= 1) {
+									updateQuantity(item.id, val);
+								}
+							}}
+							className="h-9 w-12 rounded border text-center text-sm font-semibold [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+							aria-label={`Số lượng ${item.productName}`}
+						/>
 						<button
 							onClick={() => updateQuantity(item.id, item.qty + 1)}
 							className="flex h-9 w-9 items-center justify-center rounded border"

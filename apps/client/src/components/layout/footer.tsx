@@ -29,7 +29,7 @@ const Footer = () => (
 			<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
 				{/* Company */}
 				<div>
-					<h4 className="mb-4 text-lg font-bold">Nhà Sách Kiên Giang</h4>
+					<h2 className="mb-4 text-lg font-bold">Nhà Sách Kiên Giang</h2>
 					<ul className="space-y-2 text-sm text-gray-600">
 						<li>
 							Chào mừng bạn đến Nhà Sách Kiên Giang. nhasachkiengiang.com nhận
@@ -47,7 +47,7 @@ const Footer = () => (
 
 				{/* Contact */}
 				<div>
-					<h4 className="mb-4 text-lg font-bold">Thông tin liên hệ</h4>
+					<h2 className="mb-4 text-lg font-bold">Thông tin liên hệ</h2>
 					<ul className="space-y-2 text-sm text-gray-600">
 						<li>
 							<strong>Địa chỉ:</strong> 93-95-97, Đường 3 Tháng 2, Phường Vĩnh
@@ -64,13 +64,13 @@ const Footer = () => (
 
 				{/* Services */}
 				<div>
-					<h4 className="mb-4 text-lg font-bold">DỊCH VỤ - HỖ TRỢ</h4>
+					<h2 className="mb-4 text-lg font-bold">DỊCH VỤ - HỖ TRỢ</h2>
 					<ul className="space-y-2 text-sm">
 						{SERVICES_LINKS.map((link) => (
 							<li key={link.href}>
 								<Link
 									to={link.href}
-									className="text-gray-600 hover:text-[var(--color-brand-green)] transition-colors"
+									className="text-gray-600 hover:text-[var(--color-brand-green-text)] transition-colors"
 								>
 									{link.label}
 								</Link>
@@ -81,13 +81,13 @@ const Footer = () => (
 
 				{/* Products */}
 				<div>
-					<h4 className="mb-4 text-lg font-bold">SẢN PHẨM</h4>
+					<h2 className="mb-4 text-lg font-bold">SẢN PHẨM</h2>
 					<ul className="space-y-2 text-sm">
 						{PRODUCT_LINKS.map((link) => (
 							<li key={link.href}>
 								<Link
 									to={link.href}
-									className="text-gray-600 hover:text-[var(--color-brand-green)] transition-colors"
+									className="text-gray-600 hover:text-[var(--color-brand-green-text)] transition-colors"
 								>
 									{link.label}
 								</Link>

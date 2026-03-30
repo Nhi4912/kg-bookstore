@@ -26,7 +26,7 @@ const TagSectionGrid = ({
 				<h2 className="text-xl font-bold">{title}</h2>
 				<Link
 					to={`/products/tag/${tagId}`}
-					className="flex items-center gap-1 text-sm text-gray-600 hover:text-[var(--color-brand-green)]"
+					className="flex items-center gap-1 text-sm text-gray-600 hover:text-[var(--color-brand-green-text)]"
 				>
 					Xem tất cả
 					<ArrowRight size={16} />
@@ -63,7 +63,7 @@ const TagSectionHighlight = ({
 					<h2 className="text-xl font-bold">{title}</h2>
 					<Link
 						to={`/products/tag/${tagId}`}
-						className="flex items-center gap-1 text-sm text-gray-600 hover:text-[var(--color-brand-green)]"
+						className="flex items-center gap-1 text-sm text-gray-600 hover:text-[var(--color-brand-green-text)]"
 					>
 						Xem tất cả
 						<ArrowRight size={16} />

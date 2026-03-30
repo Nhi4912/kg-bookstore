@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useCanonicalUrl, useDocumentTitle } from "@/hooks/use-document-title";
 import { useCartStore } from "@/stores/cart-store";
 import CartItemCard from "./cart-item-card";
 import CheckoutForm from "./checkout-form";
@@ -7,9 +8,14 @@ import CheckoutSuccess from "./checkout-success";
 
 const CartPage = () => {
 	const items = useCartStore((s) => s.items);
-	const totalPrice = useCartStore((s) => s.totalPrice());
+	const totalPrice = useCartStore((s) =>
+		s.items.reduce((sum, item) => sum + item.price * item.qty, 0),
+	);
 	const clearCart = useCartStore((s) => s.clearCart);
 	const [showSuccess, setShowSuccess] = useState(false);
+
+	useDocumentTitle("Giỏ hàng");
+	useCanonicalUrl("/cart");
 
 	if (showSuccess) {
 		return <CheckoutSuccess />;

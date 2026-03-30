@@ -1,11 +1,12 @@
 import type { ProductResponse } from "@kgbookstore/api-contract";
 import { ShoppingCart } from "lucide-react";
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/format";
 import { useCartStore } from "@/stores/cart-store";
 
-const ProductCard = ({ product }: { product: ProductResponse }) => {
+const ProductCard = memo(({ product }: { product: ProductResponse }) => {
 	const addItem = useCartStore((s) => s.addItem);
 	const firstVariant = product.variants?.[0];
 	const imageUrl = product.images?.[0]?.url;
@@ -47,11 +48,11 @@ const ProductCard = ({ product }: { product: ProductResponse }) => {
 			<div className="p-3">
 				<Link
 					to={`/product/${product.id}`}
-					className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-[var(--color-brand-green)]"
+					className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-[var(--color-brand-green-text)]"
 				>
 					{product.name}
 				</Link>
-				<p className="mt-1 text-base font-bold text-[var(--color-brand-green)]">
+				<p className="mt-1 text-lg font-bold text-[var(--color-brand-green-text)]">
 					{formatCurrency(price)}
 				</p>
 				<button
@@ -66,6 +67,8 @@ const ProductCard = ({ product }: { product: ProductResponse }) => {
 			</div>
 		</div>
 	);
-};
+});
+
+ProductCard.displayName = "ProductCard";
 
 export default ProductCard;

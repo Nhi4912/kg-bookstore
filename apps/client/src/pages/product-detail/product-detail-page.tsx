@@ -3,10 +3,14 @@ import { Loader2, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { BreadcrumbJsonLd, ProductJsonLd } from "@/components/seo/json-ld";
+import Breadcrumb from "@/components/shared/breadcrumb";
+import { useCanonicalUrl, useDocumentTitle } from "@/hooks/use-document-title";
 import { useProductDetail } from "@/hooks/use-products";
 import { formatCurrency } from "@/lib/format";
 import { useCartStore } from "@/stores/cart-store";
 import { useRecentStore } from "@/stores/recent-store";
+import ProductImageGallery from "./product-image-gallery";
 import RecentlyViewed from "./recently-viewed";
 import RelatedProducts from "./related-products";
 import VariantButton from "./variant-button";
@@ -18,6 +22,9 @@ const ProductDetailPage = () => {
 	const setCartOpen = useCartStore((s) => s.setCartOpen);
 	const addProductId = useRecentStore((s) => s.addProductId);
 	const getFilteredIds = useRecentStore((s) => s.getFilteredIds);
+
+	useDocumentTitle(product?.name ?? "Sản phẩm");
+	useCanonicalUrl(id ? `/product/${id}` : undefined);
 
 	const [selectedVariant, setSelectedVariant] = useState<
 		VariantResponse | undefined
@@ -54,6 +61,7 @@ const ProductDetailPage = () => {
 	}
 
 	const imageUrl = product.images?.[0]?.url;
+	const allImages = product.images ?? [];
 	const price = selectedVariant?.retail_price ?? 0;
 	const variants = product.variants ?? [];
 
@@ -84,23 +92,25 @@ const ProductDetailPage = () => {
 
 	return (
 		<div className="mx-auto max-w-7xl px-4 py-8">
+			<Breadcrumb items={[{ label: product.name }]} />
+			<ProductJsonLd
+				name={product.name}
+				description={product.description ?? product.name}
+				image={imageUrl ?? ""}
+				price={price}
+				url={window.location.href}
+			/>
+			<BreadcrumbJsonLd
+				items={[
+					{ name: "Trang chủ", url: "https://nhasachkiengiang.com" },
+					{ name: product.name, url: window.location.href },
+				]}
+			/>
 			{/* Product Intro */}
 			<div className="grid gap-8 md:grid-cols-12">
-				{/* Image */}
-				<div className="flex items-center justify-center md:col-span-4">
-					{imageUrl ? (
-						<img
-							src={imageUrl}
-							alt={product.name}
-							width={300}
-							height={300}
-							className="h-auto max-h-[300px] w-auto max-w-full object-contain"
-						/>
-					) : (
-						<div className="flex max-w-[300px] items-center justify-center rounded bg-gray-100 text-gray-400">
-							Không có ảnh
-						</div>
-					)}
+				{/* Image Gallery */}
+				<div className="md:col-span-4">
+					<ProductImageGallery images={allImages} productName={product.name} />
 				</div>
 
 				{/* Info */}
@@ -114,12 +124,24 @@ const ProductDetailPage = () => {
 						</div>
 					) : null}
 
-					<p className="mb-1 text-2xl font-bold text-[var(--color-brand-green)]">
+					<p className="mb-1 text-3xl font-bold text-[var(--color-brand-green-text)]">
 						{formatCurrency(price)}
 					</p>
-					<p className="mb-4 text-sm text-[var(--color-brand-green)]">
-						Còn hàng
-					</p>
+					{selectedVariant ? (
+						<p
+							className={`mb-4 text-sm font-medium ${
+								selectedVariant.stock_quantity > 0
+									? "text-[var(--color-brand-green-text)]"
+									: "text-[var(--color-danger)]"
+							}`}
+						>
+							{selectedVariant.stock_quantity > 0
+								? selectedVariant.stock_quantity <= 5
+									? `Chỉ còn ${selectedVariant.stock_quantity} sản phẩm`
+									: "Còn hàng"
+								: "Hết hàng"}
+						</p>
+					) : null}
 
 					{/* Quantity */}
 					<div className="mb-4 flex items-center gap-3">
@@ -160,9 +182,9 @@ const ProductDetailPage = () => {
 					{/* Add to Cart */}
 					<button
 						onClick={handleAddToCart}
-						disabled={!selectedVariant}
+						disabled={!selectedVariant || selectedVariant.stock_quantity <= 0}
 						aria-label={`Thêm ${product.name} vào giỏ hàng`}
-						className="flex items-center gap-2 rounded-md bg-[var(--color-brand-green)] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[var(--color-brand-green)]/90 disabled:opacity-50"
+						className="flex items-center gap-2 rounded-md bg-[var(--color-brand-green)] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[var(--color-brand-green)]/90 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						<ShoppingCart size={18} />
 						Thêm vào giỏ hàng

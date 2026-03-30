@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
+import Breadcrumb from "@/components/shared/breadcrumb";
 import ProductGrid from "@/components/shared/product-grid";
 import ProductListLayout from "@/components/shared/product-list-layout";
 import { useCollectionDetail } from "@/hooks/use-collections";
+import { useCanonicalUrl, useDocumentTitle } from "@/hooks/use-document-title";
 import { useProductQuery } from "@/hooks/use-product-query";
 
 const BANNER_URL =
@@ -28,11 +30,19 @@ const CollectionPage = () => {
 	const { data: collection } = useCollectionDetail(isAll ? "" : id);
 	const title = isAll ? "Tất cả sản phẩm" : (collection?.title ?? "");
 
+	useDocumentTitle(title);
+	useCanonicalUrl(`/collection/${id}`);
+
 	return (
 		<ProductListLayout
 			title={title}
 			subtitle={`${productQuery.total} sản phẩm`}
-			headerSlot={<CollectionBanner />}
+			headerSlot={
+				<>
+					<Breadcrumb items={[{ label: title }]} />
+					<CollectionBanner />
+				</>
+			}
 			productQuery={productQuery}
 		>
 			<ProductGrid

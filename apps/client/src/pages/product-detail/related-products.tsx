@@ -35,7 +35,7 @@ const RelatedProducts = ({ collectionId }: { collectionId: string }) => {
 				<h2 className="text-xl font-bold">Các sản phẩm liên quan</h2>
 				<Link
 					to={`/collection/${collectionId}`}
-					className="text-sm text-gray-500 hover:text-[var(--color-brand-green)]"
+					className="text-sm text-gray-500 hover:text-[var(--color-brand-green-text)]"
 				>
 					Xem thêm &rarr;
 				</Link>

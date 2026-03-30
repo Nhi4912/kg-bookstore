@@ -79,27 +79,57 @@ const CheckoutForm = ({ items, totalPrice, onSuccess }: CheckoutFormProps) => {
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
 				<div className="grid grid-cols-2 gap-3">
 					<div>
+						<label
+							htmlFor="checkout-last-name"
+							className="mb-1 block text-sm font-medium text-[var(--color-text-primary)]"
+						>
+							Họ
+						</label>
 						<input
+							id="checkout-last-name"
 							{...register("last_name")}
 							placeholder="Họ"
 							aria-label="Họ"
+							aria-describedby={
+								errors.last_name ? "last-name-error" : undefined
+							}
+							aria-invalid={errors.last_name ? true : undefined}
 							className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
 						/>
 						{errors.last_name ? (
-							<p className="mt-1 text-xs text-red-500">
+							<p
+								id="last-name-error"
+								role="alert"
+								className="mt-1 text-xs text-red-500"
+							>
 								{errors.last_name.message}
 							</p>
 						) : null}
 					</div>
 					<div>
+						<label
+							htmlFor="checkout-first-name"
+							className="mb-1 block text-sm font-medium text-[var(--color-text-primary)]"
+						>
+							Tên
+						</label>
 						<input
+							id="checkout-first-name"
 							{...register("first_name")}
 							placeholder="Tên"
 							aria-label="Tên"
+							aria-describedby={
+								errors.first_name ? "first-name-error" : undefined
+							}
+							aria-invalid={errors.first_name ? true : undefined}
 							className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
 						/>
 						{errors.first_name ? (
-							<p className="mt-1 text-xs text-red-500">
+							<p
+								id="first-name-error"
+								role="alert"
+								className="mt-1 text-xs text-red-500"
+							>
 								{errors.first_name.message}
 							</p>
 						) : null}
@@ -107,28 +137,54 @@ const CheckoutForm = ({ items, totalPrice, onSuccess }: CheckoutFormProps) => {
 				</div>
 
 				<div>
+					<label
+						htmlFor="checkout-phone"
+						className="mb-1 block text-sm font-medium text-[var(--color-text-primary)]"
+					>
+						Số điện thoại
+					</label>
 					<input
+						id="checkout-phone"
 						{...register("phone_number")}
 						placeholder="Số điện thoại"
 						aria-label="Số điện thoại"
+						aria-describedby={errors.phone_number ? "phone-error" : undefined}
+						aria-invalid={errors.phone_number ? true : undefined}
 						className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
 					/>
 					{errors.phone_number ? (
-						<p className="mt-1 text-xs text-red-500">
+						<p
+							id="phone-error"
+							role="alert"
+							className="mt-1 text-xs text-red-500"
+						>
 							{errors.phone_number.message}
 						</p>
 					) : null}
 				</div>
 
 				<div>
+					<label
+						htmlFor="checkout-address"
+						className="mb-1 block text-sm font-medium text-[var(--color-text-primary)]"
+					>
+						Địa chỉ
+					</label>
 					<input
+						id="checkout-address"
 						{...register("address")}
 						placeholder="Địa chỉ"
 						aria-label="Địa chỉ"
+						aria-describedby={errors.address ? "address-error" : undefined}
+						aria-invalid={errors.address ? true : undefined}
 						className="w-full rounded border px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand-green)]"
 					/>
 					{errors.address ? (
-						<p className="mt-1 text-xs text-red-500">
+						<p
+							id="address-error"
+							role="alert"
+							className="mt-1 text-xs text-red-500"
+						>
 							{errors.address.message}
 						</p>
 					) : null}

@@ -37,7 +37,7 @@ const SubscriptionForm = () => {
 				<button
 					type="submit"
 					disabled={loading}
-					className="rounded-md border border-[var(--color-brand-green)] px-6 py-3 text-sm font-semibold text-[var(--color-brand-green)] transition-colors hover:bg-[var(--color-brand-green)] hover:text-white disabled:opacity-50"
+					className="rounded-md border border-[var(--color-brand-green)] px-6 py-3 text-sm font-semibold text-[var(--color-brand-green-text)] transition-colors hover:bg-[var(--color-brand-green)] hover:text-white disabled:opacity-50"
 				>
 					ĐĂNG KÝ
 				</button>

@@ -175,7 +175,7 @@ const SearchBox = () => {
 									<p className="line-clamp-2 text-sm font-medium text-gray-800">
 										{product.name}
 									</p>
-									<p className="mt-0.5 text-sm font-semibold text-[var(--color-brand-green)]">
+									<p className="mt-0.5 text-sm font-semibold text-[var(--color-brand-green-text)]">
 										{formatCurrency(price)}
 									</p>
 								</div>
@@ -191,7 +191,7 @@ const SearchBox = () => {
 							role="option"
 							aria-selected={activeIndex === results.length}
 							onClick={handleViewMore}
-							className={`w-full border-t px-3 py-2.5 text-center text-sm font-medium text-[var(--color-brand-green)] transition-colors hover:bg-gray-50 ${
+							className={`w-full border-t px-3 py-2.5 text-center text-sm font-medium text-[var(--color-brand-green-text)] transition-colors hover:bg-gray-50 ${
 								activeIndex === results.length ? "bg-gray-50" : ""
 							}`}
 						>

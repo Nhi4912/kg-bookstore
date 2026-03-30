@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
+import Breadcrumb from "@/components/shared/breadcrumb";
 import ProductGrid from "@/components/shared/product-grid";
 import ProductListLayout from "@/components/shared/product-list-layout";
+import { useCanonicalUrl, useDocumentTitle } from "@/hooks/use-document-title";
 import { useProductQuery } from "@/hooks/use-product-query";
 import { useTags } from "@/hooks/use-tags";
 
@@ -34,11 +36,19 @@ const ProductsByTagPage = () => {
 
 	const productQuery = useProductQuery(defaultQuery);
 
+	useDocumentTitle(currentTag?.tag_name ?? "");
+	useCanonicalUrl(id ? `/products/tag/${id}` : undefined);
+
 	return (
 		<ProductListLayout
 			title={currentTag?.tag_name ?? ""}
 			subtitle={`${productQuery.total} sản phẩm`}
-			headerSlot={<TagBanner />}
+			headerSlot={
+				<>
+					<Breadcrumb items={[{ label: currentTag?.tag_name ?? "" }]} />
+					<TagBanner />
+				</>
+			}
 			productQuery={productQuery}
 		>
 			<ProductGrid
